@@ -13,8 +13,11 @@ Parameters:
     Description: Route 53 hosted zone of the parent domain
   GitHubRepo:
     Type: String
-    Description: owner/name of the repository allowed to deploy, e.g. rohit12/bibliography
-    AllowedPattern: "[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+"
+    Description: >
+      Repository allowed to deploy, as it appears in GitHub's OIDC subject claim:
+      owner@OWNER_ID/name@REPO_ID, e.g. rohit12@6738641/bibliography@1432692455.
+      The IDs come from the GitHub API (/repos/OWNER/NAME: owner.id and id).
+    AllowedPattern: "[A-Za-z0-9_.-]+(@[0-9]+)?/[A-Za-z0-9_.-]+(@[0-9]+)?"
   CreateGitHubOIDCProvider:
     Type: String
     AllowedValues: ["true", "false"]
