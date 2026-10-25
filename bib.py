@@ -2,7 +2,7 @@
 """bib — a cross-book bibliography kept as plain JSON in git.
 
 Layout
-  data/      public by construction: works, citations, books
+  data/      public by construction: works (each with the endnotes citing it), books
   private/   never committed or published: reading verdicts, notes, local extensions
   site/      the page; `build` writes the public data files into site/data/
 
@@ -36,17 +36,16 @@ SITE = ROOT / "site"
 SITE_DATA = SITE / "data"
 
 WORKS_F = DATA / "works.json"
-CITES_F = DATA / "citations.json"
 BOOKS_F = DATA / "books.json"
 NOTES_F = PRIVATE / "notes.json"
 
 def set_root(path) -> None:
     """Point the module at another checkout (used by tests)."""
-    global ROOT, DATA, PRIVATE, SITE, SITE_DATA, WORKS_F, CITES_F, BOOKS_F, NOTES_F
+    global ROOT, DATA, PRIVATE, SITE, SITE_DATA, WORKS_F, BOOKS_F, NOTES_F
     ROOT = Path(path).resolve()
     DATA, PRIVATE, SITE = ROOT / "data", ROOT / "private", ROOT / "site"
     SITE_DATA = SITE / "data"
-    WORKS_F, CITES_F, BOOKS_F = DATA / "works.json", DATA / "citations.json", DATA / "books.json"
+    WORKS_F, BOOKS_F = DATA / "works.json", DATA / "books.json"
     NOTES_F = PRIVATE / "notes.json"
 
 
@@ -59,7 +58,7 @@ VERDICTS = {"read", "skimmed", "unread"}
 # you add to a work stays in the repo but is never published.
 PUBLIC_WORK_FIELDS = [
     "id", "authors", "year", "title", "venue", "type", "citation", "doi",
-    "status", "claims", "oa",
+    "status", "claims", "oa", "cited_in", "listed_in",
 ]
 PUBLIC_OA_FIELDS = ["id", "cited_by_count", "fwci", "is_retracted", "topics", "retrieved"]
 
@@ -209,7 +208,26 @@ class DB:
     # -- io --------------------------------------------------------------
     @classmethod
     def load(cls) -> "DB":
-        return cls(load_json(WORKS_F, []), load_json(CITES_F, []), load_json(BOOKS_F, []))
+        return cls.from_files(load_json(WORKS_F, []), load_json(BOOKS_F, []))
+
+    @classmethod
+    def from_files(cls, raw_works: list, raw_books: list) -> "DB":
+        """On disk each work carries its own citations (cited_in) and the books
+        whose References list it (listed_in). In memory these are flattened."""
+        works, cites, refs = [], [], {}
+        for w in raw_works:
+            w = dict(w)
+            for c in w.pop("cited_in", []):
+                cites.append({"work": w["id"], **c})
+            for bid in w.pop("listed_in", []):
+                refs.setdefault(bid, []).append(w["id"])
+            works.append(w)
+        books = []
+        for b in raw_books:
+            b = dict(b)
+            b["references"] = refs.get(b["id"], [])
+            books.append(b)
+        return cls(works, cites, books)
 
     @classmethod
     def empty(cls) -> "DB":
@@ -218,16 +236,30 @@ class DB:
     def chapter_order(self, book_id: str) -> list[str]:
         return list(self.books.get(book_id, {}).get("chapters", {}).keys())
 
-    def save(self):
-        works = sorted(self.works.values(), key=lambda w: w["id"])
+    def to_files(self) -> tuple[list, list]:
         orders = {b: self.chapter_order(b) for b in self.books}
-        cites = sorted(
-            self.citations,
-            key=lambda c: (c["book"], loc_key(c["loc"], orders.get(c["book"], [])), c["work"]),
-        )
+        cited: dict[str, list] = {}
+        for c in sorted(self.citations,
+                        key=lambda c: (c["book"], loc_key(c["loc"], orders.get(c["book"], [])))):
+            cited.setdefault(c["work"], []).append({k: c[k] for k in ("book", "loc", "flag") if k in c})
+        listed: dict[str, list] = {}
+        for b in self.books.values():
+            for wid in b.get("references", []):
+                listed.setdefault(wid, []).append(b["id"])
+        works = []
+        for w in sorted(self.works.values(), key=lambda w: w["id"]):
+            out = {k: v for k, v in w.items() if k not in ("cited_in", "listed_in")}
+            out["cited_in"] = cited.get(w["id"], [])
+            out["listed_in"] = sorted(listed.get(w["id"], []))
+            works.append(out)
+        books = [{k: v for k, v in b.items() if k != "references"}
+                 for b in sorted(self.books.values(), key=lambda b: b["id"])]
+        return works, books
+
+    def save(self):
+        works, books = self.to_files()
         dump_json(WORKS_F, works)
-        dump_json(CITES_F, cites)
-        dump_json(BOOKS_F, sorted(self.books.values(), key=lambda b: b["id"]))
+        dump_json(BOOKS_F, books)
 
     # -- derived views ---------------------------------------------------
     def cites_by_work(self) -> dict[str, list]:
@@ -580,12 +612,10 @@ def to_csl(works) -> list:
 # build (public site data) + leak guard
 # ----------------------------------------------------------------------------
 
-def public_work(db: DB, w: dict, cbw: dict) -> dict:
-    pw = {k: w[k] for k in PUBLIC_WORK_FIELDS if k in w and w[k] not in (None, [], "")}
+def public_work(w: dict) -> dict:
+    pw = {k: w[k] for k in PUBLIC_WORK_FIELDS if k in w and w[k] not in (None, "")}
     if "oa" in pw:
         pw["oa"] = {k: v for k, v in pw["oa"].items() if k in PUBLIC_OA_FIELDS}
-    pw["books"] = db.books_for(w["id"])
-    pw["n_cites"] = len(cbw.get(w["id"], []))
     return pw
 
 
@@ -628,7 +658,7 @@ def leak_check(site_dir: Path | None = None) -> list[str]:
                 break
     for p in site_dir.rglob("works.json"):
         for w in load_json(p, []):
-            extra = set(w) - set(PUBLIC_WORK_FIELDS) - {"books", "n_cites"}
+            extra = set(w) - set(PUBLIC_WORK_FIELDS)
             if extra:
                 problems.append(f"non-public fields {sorted(extra)} in {p.relative_to(ROOT)}")
                 break
@@ -636,16 +666,13 @@ def leak_check(site_dir: Path | None = None) -> list[str]:
 
 
 def build(db: DB) -> dict:
-    cbw = db.cites_by_work()
-    works = [public_work(db, w, cbw) for w in sorted(db.works.values(), key=lambda w: w["id"])]
+    file_works, file_books = db.to_files()
+    works = [public_work(w) for w in file_works]
     for f in SITE_DATA.glob("*"):
         if f.is_file():
             f.unlink()
     dump_json(SITE_DATA / "works.json", works, compact=True)
-    dump_json(SITE_DATA / "citations.json",
-              [{k: c[k] for k in ("work", "book", "loc", "flag") if k in c} for c in db.citations],
-              compact=True)
-    dump_json(SITE_DATA / "books.json", list(db.books.values()), compact=True)
+    dump_json(SITE_DATA / "books.json", file_books, compact=True)
     raw = sorted(db.works.values(), key=lambda w: w["id"])
     (SITE_DATA / "bibliography.bib").write_text(to_bibtex(raw), encoding="utf-8")
     (SITE_DATA / "bibliography.csv").write_text(to_csv(db, raw), encoding="utf-8")
@@ -858,6 +885,8 @@ def load_extensions(sub, handlers: dict) -> None:
     if not ext.exists():
         return
     import importlib.util
+    # so `import bib` inside the extension gets this module, even when run as a script
+    sys.modules.setdefault("bib", sys.modules[__name__])
     spec = importlib.util.spec_from_file_location("bib_ext", ext)
     mod = importlib.util.module_from_spec(spec)
     sys.modules["bib_ext"] = mod

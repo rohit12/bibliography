@@ -141,7 +141,7 @@ textarea{width:100%;height:160px;margin-top:8px;font-family:var(--mono);font-siz
 
 <footer>
   <span class="dl">Data:
-    <a href="data/works.json">works.json</a><a href="data/citations.json">citations.json</a><a href="data/books.json">books.json</a><a href="data/bibliography.bib">BibTeX</a><a href="data/bibliography.csv">CSV</a>
+    <a href="data/works.json">works.json</a><a href="data/books.json">books.json</a><a href="data/bibliography.bib">BibTeX</a><a href="data/bibliography.csv">CSV</a>
   </span>
   <span id="gen"></span>
 </footer>
@@ -153,27 +153,27 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const KIND={'article':'Journal article','book':'Book, report or dataset','chapter':'Book chapter','working-paper':'Working paper','dataset':'Dataset'};
 const STATUS_LABEL={'contested':'Contested','failed-replication':'Failed replication','retracted':'Retracted','replicated':'Replicated'};
-const S={works:[],cites:[],books:{},bookOrder:[],mode:'all',shown:[]};
+const S={works:[],books:{},bookOrder:[],mode:'all',shown:[]};
 
 async function getJSON(p){const r=await fetch(p,{cache:'no-cache'});if(!r.ok)throw new Error(p+' '+r.status);return r.json();}
 
 async function init(){
-  let works,cites,books,meta;
-  try{[works,cites,books,meta]=await Promise.all(['data/works.json','data/citations.json','data/books.json','data/meta.json'].map(getJSON));}
+  let works,books,meta;
+  try{[works,books,meta]=await Promise.all(['data/works.json','data/books.json','data/meta.json'].map(getJSON));}
   catch(e){$('list').innerHTML='<li class="empty">Couldn’t load the data files. If you opened this file directly, run <code>python bib.py serve</code> and open the address it prints.</li>';return;}
   S.bookOrder=books.map(b=>b.id);
   books.forEach(b=>S.books[b.id]=b);
-  const byWork={};cites.forEach(c=>(byWork[c.work]=byWork[c.work]||[]).push(c));
   const multi=books.length>1;
   works.forEach(w=>{
-    w.c=(byWork[w.id]||[]).sort((a,b)=>S.bookOrder.indexOf(a.book)-S.bookOrder.indexOf(b.book)||locKey(a)-locKey(b));
+    w.c=(w.cited_in||[]).slice().sort((a,b)=>S.bookOrder.indexOf(a.book)-S.bookOrder.indexOf(b.book)||locKey(a)-locKey(b));
     w.citedBooks=[...new Set(w.c.map(c=>c.book))];
+    w.books=[...new Set([...(w.listed_in||[]),...w.citedBooks])];
     w.oaN=w.oa&&w.oa.cited_by_count!=null?w.oa.cited_by_count:-1;
     w.sortName=w.authors.normalize('NFD').replace(/[̀-ͯ’']/g,'').replace(/^(de |von |van )/i,'').toLowerCase();
     w.y=parseInt(w.year)||0;
     w.key=[w.authors,w.title,w.venue,w.year,w.id,(w.claims||[]).join(' '),w.c.map(c=>c.loc+' '+(c.flag||'')).join(' '),(w.oa&&w.oa.topics||[]).join(' ')].join(' ').toLowerCase();
   });
-  S.works=works;S.cites=cites;S.multi=multi;
+  S.works=works;S.multi=multi;
 
   const parts=books.map(b=>`<i>${esc(b.title)}</i> (${esc(b.author)}, ${esc(b.year)})`);
   const list=parts.length<2?parts.join(''):parts.length===2?parts.join(' and '):parts.slice(0,-1).join(', ')+', and '+parts[parts.length-1];
