@@ -1,0 +1,26 @@
+{
+ "book": {
+  "id": "henrich-2020",
+  "short": "Henrich",
+  "title": "The WEIRDest People in the World",
+  "author": "Joseph Henrich",
+  "publisher": "Farrar, Straus and Giroux",
+  "year": 2020,
+  "chapters": {"Prelude": "Prelude", "Ch 1": "Chapter title", "Ch 2": "Chapter title"},
+  "missing": [{"cite": "Smith (2001)", "where": "Ch 2 n4", "note": "Cited in endnote, not in References."}],
+  "data_sources": [{"cite": "Ethnographic Atlas", "where": "Ch 1 n3"}]
+ },
+ "references": [
+  {
+   "authors": "Alesina, Alberto, Paola Giuliano and Nathan Nunn",
+   "year": "2013",
+   "title": "On the Origins of Gender Roles: Women and the plough",
+   "venue": "The Quarterly Journal of Economics",
+   "type": "article",
+   "citation": "Full citation exactly as printed in the book",
+   "doi": "10.1093/qje/qjt005",
+   "cited_in": ["Ch 2 n14", "Ch 2 n15"],
+   "flags": {"Ch 2 n15": "cites ‘Alesina et al. (2011)’"}
+  }
+ ]
+}

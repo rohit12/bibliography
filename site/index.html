@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bibliography</title>
+<meta name="description" content="A cross-book bibliography: every work cited in each book, with the endnotes that cite it. Data available as JSON, BibTeX and CSV.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --ink:#1b2430; --muted:#5d6b7a; --rule:#d8dee5;
+  --accent:#1f4e8c; --accent-soft:#e3ecf7; --flag:#9a5b00; --flag-soft:#fbf0dc;
+  --bad:#a33a2b; --bad-soft:#f8e3df; --good:#2f6b3a; --good-soft:#e1f0e3;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171d; --surface:#1a2129; --ink:#e4e9ef; --muted:#97a4b2; --rule:#2c3640;
+  --accent:#8db6ea; --accent-soft:#1f2d3e; --flag:#e3b265; --flag-soft:#33291a;
+  --bad:#f0a093; --bad-soft:#3a221e; --good:#93d19e; --good-soft:#1c3221; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12171d; --surface:#1a2129; --ink:#e4e9ef; --muted:#97a4b2; --rule:#2c3640;
+  --accent:#8db6ea; --accent-soft:#1f2d3e; --flag:#e3b265; --flag-soft:#33291a;
+  --bad:#f0a093; --bad-soft:#3a221e; --good:#93d19e; --good-soft:#1c3221; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+header h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.5vw,36px);line-height:1.15;margin:0;text-wrap:balance}
+header p{color:var(--muted);margin:6px 0 0;max-width:66ch}
+header p i{color:var(--ink)}
+.tally{display:flex;flex-wrap:wrap;gap:6px 22px;margin:20px 0 0;padding:14px 0;border-block:1px solid var(--rule);font-size:14px}
+.tally b{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums;margin-right:5px}
+.tally a{color:inherit;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
+.tally a:hover{text-decoration-color:var(--accent)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;display:grid;grid-template-columns:1fr auto auto auto auto;gap:8px;align-items:center;border-bottom:1px solid var(--rule)}
+input,select,button{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:7px 10px;min-width:0}
+select:disabled{opacity:.5}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button{cursor:pointer;background:var(--accent);color:var(--surface);border-color:var(--accent);font-weight:500}
+button:hover{filter:brightness(1.08)}
+.row2{display:flex;flex-wrap:wrap;gap:6px;grid-column:1/-1}
+.chip{border:1px solid var(--rule);background:var(--surface);color:var(--muted);border-radius:999px;padding:3px 11px;font-size:13px;cursor:pointer;font-weight:400}
+.chip[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.chip[hidden]{display:none}
+.status{color:var(--muted);font-size:13px;margin:10px 0 4px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.letters{display:flex;flex-wrap:wrap;gap:2px;font-family:var(--mono);font-size:12px}
+.letters a{color:var(--accent);text-decoration:none;padding:0 3px}
+.letters span{color:var(--rule);padding:0 3px}
+ol.list{list-style:none;margin:0;padding:0}
+.entry{display:grid;grid-template-columns:3.2rem 1fr;gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--rule);scroll-margin-top:140px}
+.entry:target,.entry.hit{background:var(--accent-soft);box-shadow:0 0 0 8px var(--accent-soft)}
+.yr{font-family:var(--mono);font-size:13px;color:var(--muted);padding-top:3px;font-variant-numeric:tabular-nums}
+.body{min-width:0}
+.cit{font-family:var(--serif);font-size:16px;line-height:1.5;overflow-wrap:anywhere}
+.cit .au{font-weight:600}
+.cit .ti{font-style:italic}
+.meta{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:12.5px;color:var(--muted);align-items:baseline}
+.meta a{color:var(--accent);text-decoration:none}
+.meta a:hover{text-decoration:underline}
+.kind{text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+.notes{font-family:var(--mono);font-size:11.5px;color:var(--accent);word-spacing:-1px}
+.notes .bk{color:var(--muted)}
+.uncited{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px dashed var(--rule);border-radius:4px;padding:0 6px}
+.badge{font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:0 6px;font-weight:500}
+.badge.contested,.badge.failed-replication{background:var(--flag-soft);color:var(--flag)}
+.badge.retracted{background:var(--bad-soft);color:var(--bad)}
+.badge.replicated{background:var(--good-soft);color:var(--good)}
+.badge.multi{background:var(--accent-soft);color:var(--accent)}
+.claims{margin-top:5px;font-size:13px;color:var(--muted)}
+.claims span{border-left:2px solid var(--rule);padding-left:6px;margin-right:10px;display:inline-block}
+.flag{margin-top:7px;background:var(--flag-soft);color:var(--flag);border-radius:4px;padding:4px 8px;font-size:13px}
+.flag+.flag{margin-top:3px}
+mark{background:var(--accent-soft);color:inherit;border-radius:2px}
+.empty{padding:40px 0;color:var(--muted);text-align:center}
+.loading{padding:40px 0;color:var(--muted)}
+section.audit{margin-top:48px}
+section.audit h2{font-family:var(--serif);font-weight:600;font-size:22px;margin:0 0 4px}
+section.audit h3{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:26px 0 8px;font-weight:600}
+section.audit p.lead{color:var(--muted);margin:0;max-width:66ch}
+table{border-collapse:collapse;width:100%;font-size:14px}
+.tw{overflow-x:auto}
+th,td{text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+td.w{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--accent)}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
+footer a{color:var(--accent)}
+footer .dl a{font-family:var(--mono);font-size:12px;margin-right:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:6px;font-size:14px}
+textarea{width:100%;height:160px;margin-top:8px;font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:8px}
+@media (max-width:720px){
+  .controls{grid-template-columns:1fr 1fr}
+  .controls #q{grid-column:1/-1}
+  .row2 #copy{margin-left:0!important}
+  .entry{grid-template-columns:1fr}
+  .yr{padding-top:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Bibliography</h1>
+  <p id="sub">Every reference in the books below, with the endnotes that cite each work. Endnote tags read “Ch 4 n21” for chapter 4, note 21.</p>
+  <div class="tally" id="tally"></div>
+</header>
+
+<div class="controls">
+  <input id="q" type="search" placeholder="Search author, title, journal, claim, or note (e.g. Ch 8 n23)" aria-label="Search references">
+  <select id="book" aria-label="Filter by book"></select>
+  <select id="chap" aria-label="Filter by chapter" disabled><option value="">All chapters</option></select>
+  <select id="type" aria-label="Filter by type"></select>
+  <select id="sort" aria-label="Sort order">
+    <option value="az">Author A–Z</option>
+    <option value="new">Newest first</option>
+    <option value="old">Oldest first</option>
+    <option value="most">Most cited in endnotes</option>
+    <option value="books">In most books</option>
+    <option value="oa" hidden>Most cited (OpenAlex)</option>
+  </select>
+  <div class="row2">
+    <button type="button" class="chip" data-mode="all" aria-pressed="true">All entries</button>
+    <button type="button" class="chip" data-mode="multi" aria-pressed="false" hidden>Cited in 2+ books</button>
+    <button type="button" class="chip" data-mode="uncited" aria-pressed="false">Never cited in endnotes</button>
+    <button type="button" class="chip" data-mode="flag" aria-pressed="false">Citation mismatches</button>
+    <button type="button" class="chip" data-mode="disputed" aria-pressed="false" hidden>Contested or retracted</button>
+    <button type="button" id="copy" style="margin-left:auto">Copy shown as text</button>
+  </div>
+</div>
+
+<div class="status"><span id="count"></span><span class="letters" id="letters"></span></div>
+<ol class="list" id="list"><li class="loading">Loading references…</li></ol>
+<div id="fallback" hidden><textarea id="fbText" readonly aria-label="Citations to copy"></textarea></div>
+
+<div id="audits"></div>
+
+<footer>
+  <span class="dl">Data:
+    <a href="data/works.json">works.json</a><a href="data/citations.json">citations.json</a><a href="data/books.json">books.json</a><a href="data/bibliography.bib">BibTeX</a><a href="data/bibliography.csv">CSV</a>
+  </span>
+  <span id="gen"></span>
+</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KIND={'article':'Journal article','book':'Book, report or dataset','chapter':'Book chapter','working-paper':'Working paper','dataset':'Dataset'};
+const STATUS_LABEL={'contested':'Contested','failed-replication':'Failed replication','retracted':'Retracted','replicated':'Replicated'};
+const S={works:[],cites:[],books:{},bookOrder:[],mode:'all',shown:[]};
+
+async function getJSON(p){const r=await fetch(p,{cache:'no-cache'});if(!r.ok)throw new Error(p+' '+r.status);return r.json();}
+
+async function init(){
+  let works,cites,books,meta;
+  try{[works,cites,books,meta]=await Promise.all(['data/works.json','data/citations.json','data/books.json','data/meta.json'].map(getJSON));}
+  catch(e){$('list').innerHTML='<li class="empty">Couldn’t load the data files. If you opened this file directly, run <code>python bib.py serve</code> and open the address it prints.</li>';return;}
+  S.bookOrder=books.map(b=>b.id);
+  books.forEach(b=>S.books[b.id]=b);
+  const byWork={};cites.forEach(c=>(byWork[c.work]=byWork[c.work]||[]).push(c));
+  const multi=books.length>1;
+  works.forEach(w=>{
+    w.c=(byWork[w.id]||[]).sort((a,b)=>S.bookOrder.indexOf(a.book)-S.bookOrder.indexOf(b.book)||locKey(a)-locKey(b));
+    w.citedBooks=[...new Set(w.c.map(c=>c.book))];
+    w.oaN=w.oa&&w.oa.cited_by_count!=null?w.oa.cited_by_count:-1;
+    w.sortName=w.authors.normalize('NFD').replace(/[̀-ͯ’']/g,'').replace(/^(de |von |van )/i,'').toLowerCase();
+    w.y=parseInt(w.year)||0;
+    w.key=[w.authors,w.title,w.venue,w.year,w.id,(w.claims||[]).join(' '),w.c.map(c=>c.loc+' '+(c.flag||'')).join(' '),(w.oa&&w.oa.topics||[]).join(' ')].join(' ').toLowerCase();
+  });
+  S.works=works;S.cites=cites;S.multi=multi;
+
+  const parts=books.map(b=>`<i>${esc(b.title)}</i> (${esc(b.author)}, ${esc(b.year)})`);
+  const list=parts.length<2?parts.join(''):parts.length===2?parts.join(' and '):parts.slice(0,-1).join(', ')+', and '+parts[parts.length-1];
+  $('sub').innerHTML='Every reference in '+list+', with the endnotes that cite each work. Endnote tags read “Ch 4 n21” for chapter 4, note 21.';
+  $('book').innerHTML=(multi?'<option value="">All books</option>':'')+books.map(b=>`<option value="${b.id}">${esc(b.short||b.title)}</option>`).join('');
+  $('type').innerHTML='<option value="">All types</option>'+Object.entries(KIND).filter(([k])=>works.some(w=>w.type===k)).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  if(multi)document.querySelector('[data-mode="multi"]').hidden=false;
+  if(works.some(w=>['contested','failed-replication','retracted'].includes(w.status)))document.querySelector('[data-mode="disputed"]').hidden=false;
+  if(works.some(w=>w.oaN>=0))$('sort').querySelector('[value="oa"]').hidden=false;
+  if(!multi)$('sort').querySelector('[value="books"]').hidden=true;
+  setChapters();
+  tally();
+  audits();
+  $('gen').textContent='Updated '+new Date(meta.generated).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+
+  document.querySelectorAll('.chip[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+  $('tally').addEventListener('click',e=>{const a=e.target.closest('a[data-mode]');if(a){e.preventDefault();setMode(a.dataset.mode);$('list').scrollIntoView({behavior:'smooth'});}});
+  ['q','type','chap','sort'].forEach(id=>$(id).addEventListener('input',render));
+  $('book').addEventListener('input',()=>{setChapters();render();});
+  render();
+  jumpToHash();
+}
+
+function locKey(c){const b=S.books[c.book];const order=b?Object.keys(b.chapters||{}):[];const [ch,n]=c.loc.split(' n');const i=order.indexOf(ch);return (i<0?999:i)*10000+(parseInt(n)||0);}
+function setChapters(){
+  const b=S.books[$('book').value];
+  $('chap').disabled=!b;
+  $('chap').innerHTML='<option value="">All chapters</option>'+(b?Object.entries(b.chapters||{}).map(([k,v])=>`<option value="${esc(k)}">${esc(k.startsWith('Ch ')?k.slice(3)+' '+v:v)}</option>`).join(''):'');
+}
+function tally(){
+  const W=S.works,cited=W.filter(w=>w.c.length).length,flagged=W.filter(w=>w.c.some(c=>c.flag)).length;
+  const missing=Object.values(S.books).reduce((n,b)=>n+(b.missing||[]).length,0);
+  const multiN=W.filter(w=>w.citedBooks.length>1).length;
+  $('tally').innerHTML=`<span><b>${W.length}</b>works</span>`+(S.multi?`<span><b>${S.bookOrder.length}</b>books</span><span><b>${multiN}</b><a href="#" data-mode="multi">cited in 2+ books</a></span>`:'')+
+    `<span><b>${cited}</b>cited in endnotes</span><span><b>${W.length-cited}</b><a href="#" data-mode="uncited">listed but never cited</a></span><span><b>${flagged}</b><a href="#" data-mode="flag">with citation mismatches</a></span>`+(missing?`<span><b>${missing}</b><a href="#audits">cited but missing</a></span>`:'');
+}
+function audits(){
+  $('audits').innerHTML=S.bookOrder.map(id=>{const b=S.books[id];if(!(b.missing||[]).length&&!(b.data_sources||[]).length)return'';
+    return `<section class="audit" id="audit-${id}"><h2>Cited but not in the References${S.multi?': <i>'+esc(b.title)+'</i>':''}</h2>
+    <p class="lead">These works appear in the endnotes, but the References section has no matching entry. Data sources are listed separately because the book cites them only in notes.</p>
+    ${(b.missing||[]).length?`<h3>Scholarly works</h3><div class="tw"><table><thead><tr><th>Endnote cites</th><th>Where</th><th>What’s off</th></tr></thead><tbody>${b.missing.map(m=>`<tr><td>${esc(m.cite)}</td><td class="w">${esc(m.where)}</td><td>${esc(m.note)}</td></tr>`).join('')}</tbody></table></div>`:''}
+    ${(b.data_sources||[]).length?`<h3>Data sources and primary documents</h3><div class="tw"><table><thead><tr><th>Source</th><th>Where</th></tr></thead><tbody>${b.data_sources.map(m=>`<tr><td>${esc(m.cite)}</td><td class="w">${esc(m.where)}</td></tr>`).join('')}</tbody></table></div>`:''}</section>`;}).join('');
+}
+function setMode(m){S.mode=m;document.querySelectorAll('.chip[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===m));render();}
+function hl(s,q){s=String(s??'');if(!q)return esc(s);const i=s.toLowerCase().indexOf(q);return i<0?esc(s):esc(s.slice(0,i))+'<mark>'+esc(s.slice(i,i+q.length))+'</mark>'+esc(s.slice(i+q.length));}
+
+function render(){
+  const q=$('q').value.trim().toLowerCase(),t=$('type').value,bk=$('book').value,ch=$('chap').value,s=$('sort').value,m=S.mode;
+  const inBook=w=>!bk||w.books.includes(bk);
+  const inChap=w=>!ch||w.c.some(c=>c.book===bk&&c.loc.split(' n')[0]===ch);
+  const cs=w=>bk?w.c.filter(c=>c.book===bk):w.c;
+  S.shown=S.works.filter(w=>(!q||w.key.includes(q))&&(!t||w.type===t)&&inBook(w)&&inChap(w)
+    &&(m!=='uncited'||!cs(w).length)&&(m!=='flag'||cs(w).some(c=>c.flag))&&(m!=='multi'||w.citedBooks.length>1)
+    &&(m!=='disputed'||['contested','failed-replication','retracted'].includes(w.status)));
+  const byName=(a,b)=>a.sortName.localeCompare(b.sortName)||a.y-b.y;
+  const cmp={az:byName,new:(a,b)=>b.y-a.y||byName(a,b),old:(a,b)=>a.y-b.y||byName(a,b),most:(a,b)=>cs(b).length-cs(a).length||byName(a,b),
+    books:(a,b)=>b.citedBooks.length-a.citedBooks.length||b.c.length-a.c.length||byName(a,b),oa:(a,b)=>b.oaN-a.oaN||byName(a,b)}[s];
+  S.shown.sort(cmp);
+  $('count').textContent=`Showing ${S.shown.length} of ${S.works.length}`;
+  const seen=new Set();
+  $('list').innerHTML=S.shown.length?S.shown.map(w=>{
+    const L=(w.sortName[0]||'#').toUpperCase();let anchor='';
+    if(s==='az'&&!seen.has(L)){seen.add(L);anchor=`<span id="L-${L}"></span>`;}
+    const body=w.title?`<span class="au">${hl(w.authors,q)}</span> (${esc(w.year)}). <span class="ti">${hl(w.title,q)}</span>${w.venue?'. '+hl(w.venue,q):''}.`:hl(w.citation,q);
+    const shownC=cs(w);
+    let notes;
+    if(!shownC.length)notes='<span class="uncited">not cited in endnotes</span>';
+    else if(S.multi&&!bk){const g={};shownC.forEach(c=>(g[c.book]=g[c.book]||[]).push(c.loc));notes='<span class="notes">'+Object.entries(g).map(([b,l])=>`<span class="bk">${esc(S.books[b].short||b)}:</span> ${l.join(' · ')}`).join(' &nbsp; ')+'</span>';}
+    else notes=`<span class="notes">${shownC.map(c=>c.loc).join(' · ')}</span>`;
+    const badges=(STATUS_LABEL[w.status]?`<span class="badge ${w.status}">${STATUS_LABEL[w.status]}</span>`:'')+(w.citedBooks.length>1?`<span class="badge multi">${w.citedBooks.length} books</span>`:'');
+    const oa=w.oaN>=0?`<span title="Citations counted by OpenAlex">${w.oaN.toLocaleString()} citations</span>`:'';
+    const doi=w.doi?`<a href="https://doi.org/${esc(w.doi)}" rel="noopener">DOI</a>`:'';
+    const claims=(w.claims||[]).length?`<div class="claims">${w.claims.map(c=>`<span>${hl(c,q)}</span>`).join('')}</div>`:'';
+    const flags=shownC.filter(c=>c.flag).map(c=>`<div class="flag">${S.multi&&!bk?esc((S.books[c.book].short||c.book)+': '):''}${esc(c.loc)} ${esc(c.flag)}</div>`).join('');
+    return `<li class="entry" id="w-${w.id}"><div class="yr">${anchor}${esc(w.year)}</div><div class="body"><div class="cit">${body}</div><div class="meta">${badges}<span class="kind">${KIND[w.type]||w.type}</span>${notes}${oa}${doi}<a href="#w-${w.id}" aria-label="Link to this entry">#</a></div>${claims}${flags}</div></li>`;
+  }).join(''):'<li class="empty">No references match. Clear the search or switch filters.</li>';
+  const have=new Set(s==='az'?S.shown.map(w=>(w.sortName[0]||'#').toUpperCase()):[]);
+  $('letters').innerHTML=s==='az'?'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>have.has(l)?`<a href="#L-${l}">${l}</a>`:`<span>${l}</span>`).join(''):'';
+}
+function jumpToHash(){
+  const h=location.hash.slice(1);if(!h.startsWith('w-'))return;
+  const el=document.getElementById(h);if(el){el.classList.add('hit');el.scrollIntoView({block:'center'});}
+}
+window.addEventListener('hashchange',()=>{document.querySelectorAll('.entry.hit').forEach(e=>e.classList.remove('hit'));jumpToHash();});
+$('letters').addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();const el=document.getElementById(a.getAttribute('href').slice(1));if(el){const y=el.closest('li').getBoundingClientRect().top+scrollY-document.querySelector('.controls').offsetHeight-8;scrollTo({top:y,behavior:'smooth'});}});
+function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2200);}
+$('copy').onclick=()=>{
+  const txt=S.shown.map(w=>w.citation||`${w.authors} (${w.year}). ${w.title}.`).join('\n');
+  const done=()=>{$('fallback').hidden=true;toast(`Copied ${S.shown.length} citations`);};
+  const fail=()=>{$('fallback').hidden=false;$('fbText').value=txt;$('fbText').select();toast('Copy blocked here. Text selected below, press Ctrl/Cmd+C');};
+  navigator.clipboard?navigator.clipboard.writeText(txt).then(done,fail):fail();
+};
+init();
+</script>
+</body>
+</html>
