@@ -63,7 +63,7 @@ def set_root(path) -> None:
 
 
 SCHEMA_VERSION = 2
-TYPES = {"article", "book", "chapter", "working-paper", "dataset"}
+TYPES = {"article", "book", "chapter", "working-paper", "dataset", "report", "news"}
 STATUSES = {"unchecked", "replicated", "contested", "failed-replication", "retracted"}
 VERDICTS = {"read", "skimmed", "unread"}
 # How a link reads: raises, lowers, no effect, rises-then-falls, related (direction unstated)
@@ -184,6 +184,8 @@ def parse_authors(s: str) -> list[dict]:
     for p in pieces[1:]:
         p = re.sub(r"\s*\(eds?\.\)\s*", "", p)
         parts = p.split()
+        if not parts:
+            continue
         if len(parts) == 1:
             out.append({"family": parts[0], "given": ""})
         else:
@@ -954,7 +956,7 @@ def enrich(db: DB, limit: int | None = None, force: bool = False, save_every: in
 # exports
 # ----------------------------------------------------------------------------
 
-BIBTEX_TYPE = {"article": "article", "book": "book", "chapter": "incollection",
+BIBTEX_TYPE = {"article": "article", "book": "book", "chapter": "incollection", "report": "techreport", "news": "misc",
                "working-paper": "techreport", "dataset": "misc"}
 
 
@@ -973,7 +975,7 @@ def to_bibtex(works) -> str:
         fields = {"author": " and ".join(names), "title": "{" + bibtex_escape(w["title"]) + "}",
                   "year": w.get("year", "")}
         venue_key = {"article": "journal", "book": "publisher", "chapter": "booktitle",
-                     "working-paper": "institution", "dataset": "howpublished"}[w["type"]]
+                     "working-paper": "institution", "dataset": "howpublished", "report": "institution", "news": "howpublished"}[w["type"]]
         if w.get("venue"):
             fields[venue_key] = bibtex_escape(w["venue"])
         if w.get("doi"):
@@ -1000,7 +1002,7 @@ def to_csv(db: DB, works) -> str:
 
 def to_csl(works) -> list:
     cmap = {"article": "article-journal", "book": "book", "chapter": "chapter",
-            "working-paper": "report", "dataset": "dataset"}
+            "working-paper": "report", "dataset": "dataset", "report": "report", "news": "article-newspaper"}
     out = []
     for w in works:
         item = {"id": w["id"], "type": cmap[w["type"]], "title": w["title"],

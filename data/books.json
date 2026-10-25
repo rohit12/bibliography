@@ -205,5 +205,1047 @@
   ],
   "data_sources": [],
   "added": "2026-10-24"
+ },
+ {
+  "id": "kapur-2025",
+  "short": "Kapur & Subramanian",
+  "title": "A Sixth Of Humanity",
+  "author": "Devesh Kapur and Arvind Subramanian",
+  "publisher": "HarperCollins India",
+  "year": 2025,
+  "chapters": {
+   "Intro": "Introduction",
+   "Ch 1": "Freighted Inheritance, Fraught Beginnings and Fateful Choices",
+   "Ch 2": "Order: The Paradoxes of the Hobbesian State",
+   "Ch 3": "Misunderstood and Misdiagnosed: India’s Growth and Policy Regimes",
+   "Ch 4": "Planning Failure: Neither Growth nor Structural Transformation",
+   "Ch 5": "Failure Amidst Success: Robust Growth Without Structural Transformation",
+   "Ch 6": "The Kamadhenu Fiscal and Redistributive State",
+   "Ch 7": "Globalization: Skewed and Ambivalent",
+   "Ch 8": "Building Leviathan: Bureaucracy, Legibility and Presence",
+   "Ch 9": "The Development State I: Hardware of Connectivity",
+   "Ch 10": "The Development State II: Socialist Business",
+   "Ch 11": "The Development State III: Joint Family Banking",
+   "Ch 12": "The Development State IV: Software of Human Capabilities",
+   "Ch 13": "Nation-Building: Hierarchies, Inequalities and Social Cleavages",
+   "Ch 14": "Nation-Building Through Fiscal Federalism",
+   "Ch 15": "India’s Indias: Succeeding and Failing Uniquely",
+   "Ch 16": "Pathologies and Paradoxes",
+   "Ch 17": "Looking Back",
+   "Ch 18": "Peering Ahead"
+  },
+  "missing": [
+   {
+    "cite": "States Committee (1929)",
+    "where": "Ch 1 n12",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Books India (2008)",
+    "where": "Ch 1 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Nehru Committee (1928)",
+    "where": "Ch 1 n48",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "First (1951)",
+    "where": "Ch 1 n59",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Fourth (1955)",
+    "where": "Ch 1 n59",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Seventeenth (1964)",
+    "where": "Ch 1 n59",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Twenty-Fifth (1972)",
+    "where": "Ch 1 n59",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Forty-Fourth (1978)",
+    "where": "Ch 1 n59",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Chief Ministers (1947)",
+    "where": "Ch 1 n64",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Allen Lane (2014)",
+    "where": "Ch 1 n64",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Bodley Head (2022)",
+    "where": "Ch 2 n6",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Police Commission (1980)",
+    "where": "Ch 2 n18",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Chicago Press (1987)",
+    "where": "Ch 2 n18",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1969)",
+    "where": "Ch 2 n18",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Reforms Commission (1967)",
+    "where": "Ch 2 n18",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "University Press (2022)",
+    "where": "Ch 2 n29",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Publishing House (1984)",
+    "where": "Ch 2 n37",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Sage Publications (2013)",
+    "where": "Ch 2 n37",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1980)",
+    "where": "Ch 2 n47, Ch 2 n49, Ch 2 n84, Ch 2 n85, Ch 9 n12",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Annual Report (1979)",
+    "where": "Ch 2 n52",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Annual Report (2020)",
+    "where": "Ch 2 n52",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Act (1963)",
+    "where": "Ch 2 n59",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "March (2022)",
+    "where": "Ch 2 n61",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Maintenance Act (1968)",
+    "where": "Ch 2 n62",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Property Act (1984)",
+    "where": "Ch 2 n62",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Substances Act (1985)",
+    "where": "Ch 2 n62",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Laundering Act (2002)",
+    "where": "Ch 2 n62",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Police Commission (1902)",
+    "where": "Ch 2 n65",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1979)",
+    "where": "Ch 2 n66, Ch 2 n67, Ch 8 n8",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Forty-Ninth Report (1982)",
+    "where": "Ch 2 n68",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1983)",
+    "where": "Ch 2 n68",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Ribeiro Committee (1998)",
+    "where": "Ch 2 n69",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Padmanabhaiah Committee (2000)",
+    "where": "Ch 2 n69",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Criminal Justice (2003)",
+    "where": "Ch 2 n69",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Country (1972)",
+    "where": "Ch 2 n72",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Project Database (2020)",
+    "where": "Ch 3 n2",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Economic Prospects (2024)",
+    "where": "Ch 3 n26",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World Bank (2024)",
+    "where": "Ch 3 n26",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (2018)",
+    "where": "Ch 3 n33",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Random House (2018)",
+    "where": "Ch 3 n47, Ch 6 n8",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Commerce (1954)",
+    "where": "Ch 4 n12, Ch 4 n13",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Supply (1985)",
+    "where": "Ch 4 n14",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Estimates Committee (1998)",
+    "where": "Ch 4 n15",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Labour (2017)",
+    "where": "Ch 4 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Textiles (2017)",
+    "where": "Ch 4 n17",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Orient Longman (1987)",
+    "where": "Ch 4 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Agrarian Reforms (1976)",
+    "where": "Ch 4 n50",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Country Study (1979)",
+    "where": "Ch 4 n61",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Institution Press (2018)",
+    "where": "Ch 4 n67",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World Bank (1974)",
+    "where": "Ch 4 n68",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Farmer’s Welfare (2017)",
+    "where": "Ch 4 n72",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Ninth Report (1967)",
+    "where": "Ch 4 n77",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Industrial Development (1967)",
+    "where": "Ch 4 n77",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Industrial Development (1972)",
+    "where": "Ch 4 n77",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Industrial Development (1974)",
+    "where": "Ch 4 n77",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Licensing (1966)",
+    "where": "Ch 4 n79",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Bhagwati (1970)",
+    "where": "Ch 4 n79",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Policy Study (1986)",
+    "where": "Ch 4 n79",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (2016)",
+    "where": "Ch 5 n9, Ch 7 n63",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Electricity Authority (2024)",
+    "where": "Ch 5 n23",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Commission Reports (2015)",
+    "where": "Ch 5 n31",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Labour (2002)",
+    "where": "Ch 5 n32",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World (1914)",
+    "where": "Ch 6 n8",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Enquiry Commission (1953)",
+    "where": "Ch 6 n12",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Promote Employment’ (1980)",
+    "where": "Ch 6 n12",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Enquiry Committee (1971)",
+    "where": "Ch 6 n23",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Agricultural Wealth (1972)",
+    "where": "Ch 6 n24",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Finance Statistics (2017)",
+    "where": "Ch 6 n26",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Final Report (1971)",
+    "where": "Ch 6 n32",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Economic Survey (2016)",
+    "where": "Ch 6 n35",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Community Survey (2022)",
+    "where": "Ch 7 n2",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India’ (2017)",
+    "where": "Ch 7 n4",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "University Press (2010)",
+    "where": "Ch 7 n5",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Knopf (1977)",
+    "where": "Ch 7 n34",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (2013)",
+    "where": "Ch 7 n34",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World Bank (2023)",
+    "where": "Ch 7 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Academic Institutions (1980)",
+    "where": "Ch 7 n46",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "IIT Review (2004)",
+    "where": "Ch 7 n47",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Business School (2000)",
+    "where": "Ch 7 n60",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Pay Commission (1984)",
+    "where": "Ch 8 n11",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Annual Report (2023)",
+    "where": "Ch 8 n11",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Annual Report (2021)",
+    "where": "Ch 8 n15",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Tenth Report (2008)",
+    "where": "Ch 8 n22",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Annual Report (2004)",
+    "where": "Ch 8 n23",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Sabha Secretariat (2023)",
+    "where": "Ch 8 n39",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Personnel Administration (1969)",
+    "where": "Ch 8 n48",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Personnel Administration (2008)",
+    "where": "Ch 8 n49, Ch 8 n51",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Structural Reforms (2018)",
+    "where": "Ch 8 n69",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Banerjee (2007)",
+    "where": "Ch 8 n75",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Rural Areas (1977)",
+    "where": "Ch 8 n76",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1991)",
+    "where": "Ch 8 n78",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Wahi (2017)",
+    "where": "Ch 8 n84",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Large Dams (2019)",
+    "where": "Ch 8 n85, Ch 13 n17",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Inquiry Committee (1954)",
+    "where": "Ch 9 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Kunzru Committee (1962)",
+    "where": "Ch 9 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Wanchoo Committee (1968)",
+    "where": "Ch 9 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Sikri Committee (1978)",
+    "where": "Ch 9 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Khanna Committee (1999)",
+    "where": "Ch 9 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Khanna Committee (2001)",
+    "where": "Ch 9 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Kakodkar Committee (2012)",
+    "where": "Ch 9 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "IN (1995)",
+    "where": "Ch 9 n20",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1959)",
+    "where": "Ch 9 n27",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Accounts Committee (1983)",
+    "where": "Ch 9 n34",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Economic Survey (1982)",
+    "where": "Ch 9 n35",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World Bank (1991)",
+    "where": "Ch 9 n40",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Development Council (1952)",
+    "where": "Ch 10 n1",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World Bank (1995)",
+    "where": "Ch 10 n10",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1972)",
+    "where": "Ch 10 n27",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1964)",
+    "where": "Ch 10 n37",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Marginal Farmers (1971)",
+    "where": "Ch 11 n18",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "RBI (1954)",
+    "where": "Ch 11 n19",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "REC (1969)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "HUDCO (1970)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "PFC (1986)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "EXIM Bank (1982)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "SCICI (1986)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "IRFC (1986)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "IREDA (1987)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "TFCI (1989)",
+    "where": "Ch 11 n36",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "RBI (2019)",
+    "where": "Ch 11 n50",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Rangarajan (2008)",
+    "where": "Ch 11 n51",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Karnataka (1992)",
+    "where": "Ch 12 n40",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Andhra Pradesh (1993)",
+    "where": "Ch 12 n40",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1962)",
+    "where": "Ch 12 n45",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Abstract India (2003)",
+    "where": "Ch 12 n45",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "School Education (2007)",
+    "where": "Ch 12 n45",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1976)",
+    "where": "Ch 12 n51",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India Press (1960)",
+    "where": "Ch 12 n53",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World Bank (2016)",
+    "where": "Ch 12 n67",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Fact Sheet (2023)",
+    "where": "Ch 12 n68",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Rajkamal Prakashan (2023)",
+    "where": "Ch 13 n1",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Hutchinson International (1947)",
+    "where": "Ch 13 n6",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (2014)",
+    "where": "Ch 13 n14",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Twenty-Eight Report (1986)",
+    "where": "Ch 13 n19",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Classes Commission (1955)",
+    "where": "Ch 13 n22, Ch 13 n23, Ch 13 n24, Ch 13 n25, Ch 13 n27",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Daanish Books (2012)",
+    "where": "Ch 13 n28",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Health Survey-5 (2019)",
+    "where": "Ch 13 n33",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (2023)",
+    "where": "Ch 13 n34",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Religious (2007)",
+    "where": "Ch 13 n39",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Economic Survey (2017)",
+    "where": "Ch 13 n40",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Emotional Integration (1962)",
+    "where": "Ch 13 n61, Ch 13 n69, Ch 13 n70, Ch 13 n71",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Enquiry Committee (1951)",
+    "where": "Ch 13 n63",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Estimates Committee (1974)",
+    "where": "Ch 13 n72",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Chicago Press (2004)",
+    "where": "Ch 13 n75",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Libraries (1970)",
+    "where": "Ch 13 n77",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Defence Services-Policy (2001)",
+    "where": "Ch 13 n83",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Bazar Disturbances (1974)",
+    "where": "Ch 13 n91",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1988)",
+    "where": "Ch 14 n11",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (2010)",
+    "where": "Ch 14 n17",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "India (1981)",
+    "where": "Ch 14 n27",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Self Government (1963)",
+    "where": "Ch 14 n45, Ch 14 n46",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Finance Commission (2000)",
+    "where": "Ch 14 n45, Ch 14 n46",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Finance Commission (2019)",
+    "where": "Ch 14 n45",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "ICRIER (2019)",
+    "where": "Ch 14 n46, Ch 14 n53",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Rai Mehta (1957)",
+    "where": "Ch 14 n50",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Controls (1979)",
+    "where": "Ch 14 n55",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Indicators Database (2020)",
+    "where": "Ch 14 n61",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Maddison Project (2023)",
+    "where": "Ch 14 n61",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "la Migration Survey (2023)",
+    "where": "Ch 15 n10, Ch 15 n11",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Kannan (2020)",
+    "where": "Ch 15 n11",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Amirapu (2014)",
+    "where": "Ch 15 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "ASI (2013)",
+    "where": "Ch 15 n19",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Higher Education (2021)",
+    "where": "Ch 15 n43",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Endowments Commission (1960)",
+    "where": "Ch 16 n3",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Economic Survey (2015)",
+    "where": "Ch 16 n21",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Maddison (2020)",
+    "where": "Ch 17 n1",
+    "note": "Cited in a note; no matching bibliography entry."
+   }
+  ],
+  "data_sources": [],
+  "added": "2026-10-25"
+ },
+ {
+  "id": "kroeber-2020",
+  "short": "Kroeber",
+  "title": "China’s Economy",
+  "author": "Arthur R. Kroeber",
+  "publisher": "Oxford University Press",
+  "year": 2020,
+  "chapters": {
+   "Ch 1": "Why China Matters",
+   "Ch 2": "Population, Geography, and History",
+   "Ch 3": "China’s Political Economy",
+   "Ch 4": "Agriculture, Land, and the Rural Economy",
+   "Ch 5": "Industry, Exports, and Technology",
+   "Ch 6": "Urbanization and Infrastructure",
+   "Ch 7": "The Enterprise System",
+   "Ch 8": "The Government Finance System",
+   "Ch 9": "The Financial System",
+   "Ch 10": "Energy and the Environment",
+   "Ch 11": "Demographics and the Labor Market",
+   "Ch 12": "The Emerging Consumer Economy",
+   "Ch 13": "The Social Compact",
+   "Ch 14": "Changing the Growth Model",
+   "Ch 15": "China and the World: Is Conflict Inevitable?"
+  },
+  "missing": [
+   {
+    "cite": "University Press (2017)",
+    "where": "Ch 1 n1, Ch 9 n7",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Knopf (2018)",
+    "where": "Ch 2 n4",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Knopf (2012)",
+    "where": "Ch 2 n4",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "University Press (2015)",
+    "where": "Ch 2 n5",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Random House (2014)",
+    "where": "Ch 2 n5",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "University Press (2008)",
+    "where": "Ch 3 n8, Ch 5 n3",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Studwell (2013)",
+    "where": "Ch 3 n19",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Vintage (1995)",
+    "where": "Ch 3 n19",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Science (2006)",
+    "where": "Ch 5 n7",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Book Company (1993)",
+    "where": "Ch 5 n24",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Commercial Press (1995)",
+    "where": "Ch 5 n24",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "OECD Publishing (2015)",
+    "where": "Ch 6 n10",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "DRC (2014)",
+    "where": "Ch 6 n21",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Brookings Institution (2013)",
+    "where": "Ch 8 n4",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Staff Report (2019)",
+    "where": "Ch 8 n11",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Monetary Fund (2019)",
+    "where": "Ch 9 n15",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "International Economics (2011)",
+    "where": "Ch 9 n25",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "University Press (2012)",
+    "where": "Ch 9 n27, Ch 13 n16",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "World Energy (2019)",
+    "where": "Ch 10 n3",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Energy Group (2016)",
+    "where": "Ch 10 n17",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Grau (2008)",
+    "where": "Ch 11 n23",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "University Press (2016)",
+    "where": "Ch 13 n14",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "University Press (2006)",
+    "where": "Ch 13 n14, Ch 14 n10",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Development Bank (2016)",
+    "where": "Ch 13 n23",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Free Press (2006)",
+    "where": "Ch 14 n10",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Other Press (2017)",
+    "where": "Ch 15 n33",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Mifflin Harcourt (2017)",
+    "where": "Ch 15 n33",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Global Attitudes (2017)",
+    "where": "Ch 15 n34",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Also Pew (2020)",
+    "where": "Ch 15 n34",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Hoover Institution (2018)",
+    "where": "Ch 15 n38",
+    "note": "Cited in a note; no matching bibliography entry."
+   }
+  ],
+  "data_sources": [],
+  "added": "2026-10-25"
  }
 ]

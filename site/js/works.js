@@ -1,7 +1,7 @@
 // Works: every cited work, filterable by book and chapter, with what each endnote citing it claims.
 import {$, D, need, esc, claimsHTML, badge, WEAK, toast, fail} from './core.js';
 
-const KIND = {'article': 'Journal article', 'book': 'Book, report or dataset', 'chapter': 'Book chapter', 'working-paper': 'Working paper', 'dataset': 'Dataset'};
+const KIND = {'article': 'Journal article', 'book': 'Book, report or dataset', 'chapter': 'Book chapter', 'working-paper': 'Working paper', 'dataset': 'Dataset', 'report': 'Report', 'news': 'News or web'};
 const S = {mode: 'all', shown: [], ready: false, ctl: {}};
 
 export async function mount(el, args, hash) {
