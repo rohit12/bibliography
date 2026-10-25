@@ -1,6 +1,6 @@
 # Bibliography
 
-A cross-book bibliography: every work cited in a set of books, with the endnotes that cite it. It starts with the references in Oded Galor's *The Journey of Humanity* (2022).
+A cross-book bibliography: every work cited in a set of books, with the endnotes that cite it.
 
 - `data/works.json`: one record per work, with the endnotes that cite it
 - `data/books.json`: the books
@@ -17,4 +17,4 @@ aws cloudformation deploy --region us-east-1 --stack-name bibliography-site \
   --parameter-overrides DomainName=bib.example.com HostedZoneId=Z... GitHubRepo=owner@OWNER_ID/bibliography@REPO_ID
 ```
 
-Put the stack outputs in the `env` block of `.github/workflows/deploy.yml`. After that, every push to `main` deploys.
+To require a login, also pass `BasicAuthHash` (see its description in `infra/site.yml`). Put the stack outputs in the `env` block of `.github/workflows/deploy.yml`. After that, every push to `main` deploys.

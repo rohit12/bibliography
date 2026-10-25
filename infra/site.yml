@@ -24,8 +24,18 @@ Parameters:
     Default: "true"
     Description: Set to false if this AWS account already has the GitHub OIDC provider
 
+  BasicAuthHash:
+    Type: String
+    NoEcho: true
+    Default: ""
+    AllowedPattern: "^$|^[0-9a-f]{64}$"
+    Description: >
+      To require a login, the SHA-256 hex digest of base64("user:password"), e.g.
+      printf %s "$(printf %s 'user:password' | base64)" | sha256sum. Leave empty for a public site.
+
 Conditions:
   MakeOIDC: !Equals [!Ref CreateGitHubOIDCProvider, "true"]
+  UseAuth: !Not [!Equals [!Ref BasicAuthHash, ""]]
 
 Resources:
   Bucket:
@@ -89,10 +99,48 @@ Resources:
           # (CORS so other sites and notebooks can fetch the JSON directly)
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
           ResponseHeadersPolicyId: eaab4381-ed33-4a86-88ca-d9558dc6cd63
+          FunctionAssociations: !If
+            - UseAuth
+            - - EventType: viewer-request
+                FunctionARN: !GetAtt AuthFunction.FunctionARN
+            - !Ref AWS::NoValue
         ViewerCertificate:
           AcmCertificateArn: !Ref Certificate
           SslSupportMethod: sni-only
           MinimumProtocolVersion: TLSv1.2_2021
+
+  # Checks a username and password on every request, before the cache, so no page
+  # or data file is served without them. The browser asks once and remembers.
+  AuthFunction:
+    Type: AWS::CloudFront::Function
+    Condition: UseAuth
+    Properties:
+      Name: !Sub "${AWS::StackName}-auth"
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Basic auth for the bibliography site
+        Runtime: cloudfront-js-2.0
+      FunctionCode: !Sub |
+        var crypto = require('crypto');
+        var EXPECTED = '${BasicAuthHash}';
+        function handler(event) {
+          var request = event.request;
+          var header = request.headers.authorization;
+          if (header && header.value.indexOf('Basic ') === 0) {
+            var digest = crypto.createHash('sha256').update(header.value.slice(6)).digest('hex');
+            if (digest === EXPECTED) {
+              return request;
+            }
+          }
+          return {
+            statusCode: 401,
+            statusDescription: 'Unauthorized',
+            headers: {
+              'www-authenticate': { value: 'Basic realm="Bibliography", charset="UTF-8"' },
+              'cache-control': { value: 'no-store' }
+            }
+          };
+        }
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -176,11 +224,11 @@ Outputs:
   SiteURL:
     Value: !Sub "https://${DomainName}"
   BucketName:
-    Description: GitHub variable S3_BUCKET
+    Description: S3_BUCKET in the deploy workflow
     Value: !Ref Bucket
   DistributionId:
-    Description: GitHub variable CLOUDFRONT_DISTRIBUTION_ID
+    Description: CLOUDFRONT_DISTRIBUTION_ID in the deploy workflow
     Value: !Ref Distribution
   DeployRoleArn:
-    Description: GitHub variable AWS_ROLE_ARN
+    Description: AWS_ROLE_ARN in the deploy workflow
     Value: !GetAtt DeployRole.Arn

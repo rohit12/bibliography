@@ -37,9 +37,11 @@ header p i{color:var(--ink)}
 .tally a{color:inherit;text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
 .tally a:hover{text-decoration-color:var(--accent)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;display:grid;grid-template-columns:1fr auto auto auto auto;gap:8px;align-items:center;border-bottom:1px solid var(--rule)}
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;display:grid;grid-template-columns:minmax(200px,1fr) auto auto auto auto;gap:8px;align-items:center;border-bottom:1px solid var(--rule)}
 input,select,button{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:7px 10px;min-width:0}
 select:disabled{opacity:.5}
+#book{max-width:240px}
+@media (max-width:720px){#book{max-width:none}}
 input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 button{cursor:pointer;background:var(--accent);color:var(--surface);border-color:var(--accent);font-weight:500}
 button:hover{filter:brightness(1.08)}
@@ -65,7 +67,6 @@ ol.list{list-style:none;margin:0;padding:0}
 .kind{text-transform:uppercase;letter-spacing:.06em;font-size:11px}
 .notes{font-family:var(--mono);font-size:11.5px;color:var(--accent);word-spacing:-1px}
 .notes .bk{color:var(--muted)}
-.uncited{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px dashed var(--rule);border-radius:4px;padding:0 6px}
 .badge{font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:0 6px;font-weight:500}
 .badge.contested,.badge.failed-replication{background:var(--flag-soft);color:var(--flag)}
 .badge.retracted{background:var(--bad-soft);color:var(--bad)}
@@ -73,20 +74,9 @@ ol.list{list-style:none;margin:0;padding:0}
 .badge.multi{background:var(--accent-soft);color:var(--accent)}
 .claims{margin-top:5px;font-size:13px;color:var(--muted)}
 .claims span{border-left:2px solid var(--rule);padding-left:6px;margin-right:10px;display:inline-block}
-.flag{margin-top:7px;background:var(--flag-soft);color:var(--flag);border-radius:4px;padding:4px 8px;font-size:13px}
-.flag+.flag{margin-top:3px}
 mark{background:var(--accent-soft);color:inherit;border-radius:2px}
 .empty{padding:40px 0;color:var(--muted);text-align:center}
 .loading{padding:40px 0;color:var(--muted)}
-section.audit{margin-top:48px}
-section.audit h2{font-family:var(--serif);font-weight:600;font-size:22px;margin:0 0 4px}
-section.audit h3{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:26px 0 8px;font-weight:600}
-section.audit p.lead{color:var(--muted);margin:0;max-width:66ch}
-table{border-collapse:collapse;width:100%;font-size:14px}
-.tw{overflow-x:auto}
-th,td{text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
-th{font-weight:500;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
-td.w{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--accent)}
 footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
 footer a{color:var(--accent)}
 footer .dl a{font-family:var(--mono);font-size:12px;margin-right:12px}
@@ -106,7 +96,7 @@ textarea{width:100%;height:160px;margin-top:8px;font-family:var(--mono);font-siz
 <div class="wrap">
 <header>
   <h1>Bibliography</h1>
-  <p id="sub">Every reference in the books below, with the endnotes that cite each work. Endnote tags read “Ch 4 n21” for chapter 4, note 21.</p>
+  <p id="sub">Works cited across a growing set of books, with the endnotes that cite each one. Endnote tags read “Ch 4 n21” for chapter 4, note 21.</p>
   <div class="tally" id="tally"></div>
 </header>
 
@@ -126,8 +116,6 @@ textarea{width:100%;height:160px;margin-top:8px;font-family:var(--mono);font-siz
   <div class="row2">
     <button type="button" class="chip" data-mode="all" aria-pressed="true">All entries</button>
     <button type="button" class="chip" data-mode="multi" aria-pressed="false" hidden>Cited in 2+ books</button>
-    <button type="button" class="chip" data-mode="uncited" aria-pressed="false">Never cited in endnotes</button>
-    <button type="button" class="chip" data-mode="flag" aria-pressed="false">Citation mismatches</button>
     <button type="button" class="chip" data-mode="disputed" aria-pressed="false" hidden>Contested or retracted</button>
     <button type="button" id="copy" style="margin-left:auto">Copy shown as text</button>
   </div>
@@ -136,8 +124,6 @@ textarea{width:100%;height:160px;margin-top:8px;font-family:var(--mono);font-siz
 <div class="status"><span id="count"></span><span class="letters" id="letters"></span></div>
 <ol class="list" id="list"><li class="loading">Loading references…</li></ol>
 <div id="fallback" hidden><textarea id="fbText" readonly aria-label="Citations to copy"></textarea></div>
-
-<div id="audits"></div>
 
 <footer>
   <span class="dl">Data:
@@ -171,22 +157,21 @@ async function init(){
     w.oaN=w.oa&&w.oa.cited_by_count!=null?w.oa.cited_by_count:-1;
     w.sortName=w.authors.normalize('NFD').replace(/[̀-ͯ’']/g,'').replace(/^(de |von |van )/i,'').toLowerCase();
     w.y=parseInt(w.year)||0;
-    w.key=[w.authors,w.title,w.venue,w.year,w.id,(w.claims||[]).join(' '),w.c.map(c=>c.loc+' '+(c.flag||'')).join(' '),(w.oa&&w.oa.topics||[]).join(' ')].join(' ').toLowerCase();
+    w.key=[w.authors,w.title,w.venue,w.year,w.id,(w.claims||[]).join(' '),w.c.map(c=>c.loc).join(' '),(w.oa&&w.oa.topics||[]).join(' ')].join(' ').toLowerCase();
   });
   S.works=works;S.multi=multi;
 
-  const parts=books.map(b=>`<i>${esc(b.title)}</i> (${esc(b.author)}, ${esc(b.year)})`);
-  const list=parts.length<2?parts.join(''):parts.length===2?parts.join(' and '):parts.slice(0,-1).join(', ')+', and '+parts[parts.length-1];
-  $('sub').innerHTML='Every reference in '+list+', with the endnotes that cite each work. Endnote tags read “Ch 4 n21” for chapter 4, note 21.';
-  $('book').innerHTML=(multi?'<option value="">All books</option>':'')+books.map(b=>`<option value="${b.id}">${esc(b.short||b.title)}</option>`).join('');
+  const byTitle=books.slice().sort((a,b)=>a.title.replace(/^(the|a|an) /i,'').localeCompare(b.title.replace(/^(the|a|an) /i,'')));
+  $('book').innerHTML='<option value="">All books</option>'+byTitle.map(b=>`<option value="${b.id}" title="${esc(b.title)} — ${esc(b.author)}">${esc(b.title)}</option>`).join('');
   $('type').innerHTML='<option value="">All types</option>'+Object.entries(KIND).filter(([k])=>works.some(w=>w.type===k)).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
   if(multi)document.querySelector('[data-mode="multi"]').hidden=false;
   if(works.some(w=>['contested','failed-replication','retracted'].includes(w.status)))document.querySelector('[data-mode="disputed"]').hidden=false;
   if(works.some(w=>w.oaN>=0))$('sort').querySelector('[value="oa"]').hidden=false;
   if(!multi)$('sort').querySelector('[value="books"]').hidden=true;
+  const chips=[...document.querySelectorAll('.chip[data-mode]')];
+  if(chips.filter(c=>!c.hidden).length<2)chips.forEach(c=>c.hidden=true);
   setChapters();
   tally();
-  audits();
   $('gen').textContent='Updated '+new Date(meta.generated).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
 
   document.querySelectorAll('.chip[data-mode]').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
@@ -204,18 +189,9 @@ function setChapters(){
   $('chap').innerHTML='<option value="">All chapters</option>'+(b?Object.entries(b.chapters||{}).map(([k,v])=>`<option value="${esc(k)}">${esc(k.startsWith('Ch ')?k.slice(3)+' '+v:v)}</option>`).join(''):'');
 }
 function tally(){
-  const W=S.works,cited=W.filter(w=>w.c.length).length,flagged=W.filter(w=>w.c.some(c=>c.flag)).length;
-  const missing=Object.values(S.books).reduce((n,b)=>n+(b.missing||[]).length,0);
-  const multiN=W.filter(w=>w.citedBooks.length>1).length;
-  $('tally').innerHTML=`<span><b>${W.length}</b>works</span>`+(S.multi?`<span><b>${S.bookOrder.length}</b>books</span><span><b>${multiN}</b><a href="#" data-mode="multi">cited in 2+ books</a></span>`:'')+
-    `<span><b>${cited}</b>cited in endnotes</span><span><b>${W.length-cited}</b><a href="#" data-mode="uncited">listed but never cited</a></span><span><b>${flagged}</b><a href="#" data-mode="flag">with citation mismatches</a></span>`+(missing?`<span><b>${missing}</b><a href="#audits">cited but missing</a></span>`:'');
-}
-function audits(){
-  $('audits').innerHTML=S.bookOrder.map(id=>{const b=S.books[id];if(!(b.missing||[]).length&&!(b.data_sources||[]).length)return'';
-    return `<section class="audit" id="audit-${id}"><h2>Cited but not in the References${S.multi?': <i>'+esc(b.title)+'</i>':''}</h2>
-    <p class="lead">These works appear in the endnotes, but the References section has no matching entry. Data sources are listed separately because the book cites them only in notes.</p>
-    ${(b.missing||[]).length?`<h3>Scholarly works</h3><div class="tw"><table><thead><tr><th>Endnote cites</th><th>Where</th><th>What’s off</th></tr></thead><tbody>${b.missing.map(m=>`<tr><td>${esc(m.cite)}</td><td class="w">${esc(m.where)}</td><td>${esc(m.note)}</td></tr>`).join('')}</tbody></table></div>`:''}
-    ${(b.data_sources||[]).length?`<h3>Data sources and primary documents</h3><div class="tw"><table><thead><tr><th>Source</th><th>Where</th></tr></thead><tbody>${b.data_sources.map(m=>`<tr><td>${esc(m.cite)}</td><td class="w">${esc(m.where)}</td></tr>`).join('')}</tbody></table></div>`:''}</section>`;}).join('');
+  const W=S.works,n=S.bookOrder.length,multiN=W.filter(w=>w.citedBooks.length>1).length;
+  $('tally').innerHTML=`<span><b>${W.length}</b>works</span><span><b>${n}</b>${n===1?'book':'books'}</span>`+
+    (S.multi?`<span><b>${multiN}</b><a href="#" data-mode="multi">cited in 2+ books</a></span>`:'');
 }
 function setMode(m){S.mode=m;document.querySelectorAll('.chip[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===m));render();}
 function hl(s,q){s=String(s??'');if(!q)return esc(s);const i=s.toLowerCase().indexOf(q);return i<0?esc(s):esc(s.slice(0,i))+'<mark>'+esc(s.slice(i,i+q.length))+'</mark>'+esc(s.slice(i+q.length));}
@@ -226,7 +202,7 @@ function render(){
   const inChap=w=>!ch||w.c.some(c=>c.book===bk&&c.loc.split(' n')[0]===ch);
   const cs=w=>bk?w.c.filter(c=>c.book===bk):w.c;
   S.shown=S.works.filter(w=>(!q||w.key.includes(q))&&(!t||w.type===t)&&inBook(w)&&inChap(w)
-    &&(m!=='uncited'||!cs(w).length)&&(m!=='flag'||cs(w).some(c=>c.flag))&&(m!=='multi'||w.citedBooks.length>1)
+    &&(m!=='multi'||w.citedBooks.length>1)
     &&(m!=='disputed'||['contested','failed-replication','retracted'].includes(w.status)));
   const byName=(a,b)=>a.sortName.localeCompare(b.sortName)||a.y-b.y;
   const cmp={az:byName,new:(a,b)=>b.y-a.y||byName(a,b),old:(a,b)=>a.y-b.y||byName(a,b),most:(a,b)=>cs(b).length-cs(a).length||byName(a,b),
@@ -240,15 +216,14 @@ function render(){
     const body=w.title?`<span class="au">${hl(w.authors,q)}</span> (${esc(w.year)}). <span class="ti">${hl(w.title,q)}</span>${w.venue?'. '+hl(w.venue,q):''}.`:hl(w.citation,q);
     const shownC=cs(w);
     let notes;
-    if(!shownC.length)notes='<span class="uncited">not cited in endnotes</span>';
-    else if(S.multi&&!bk){const g={};shownC.forEach(c=>(g[c.book]=g[c.book]||[]).push(c.loc));notes='<span class="notes">'+Object.entries(g).map(([b,l])=>`<span class="bk">${esc(S.books[b].short||b)}:</span> ${l.join(' · ')}`).join(' &nbsp; ')+'</span>';}
+    if(!shownC.length)notes='';
+    else if(S.multi&&!bk){const g={};shownC.forEach(c=>(g[c.book]=g[c.book]||[]).push(c.loc));notes='<span class="notes">'+Object.entries(g).map(([b,l])=>`<span class="bk">${esc(S.books[b].title)}:</span> ${l.join(' · ')}`).join(' &nbsp; ')+'</span>';}
     else notes=`<span class="notes">${shownC.map(c=>c.loc).join(' · ')}</span>`;
     const badges=(STATUS_LABEL[w.status]?`<span class="badge ${w.status}">${STATUS_LABEL[w.status]}</span>`:'')+(w.citedBooks.length>1?`<span class="badge multi">${w.citedBooks.length} books</span>`:'');
     const oa=w.oaN>=0?`<span title="Citations counted by OpenAlex">${w.oaN.toLocaleString()} citations</span>`:'';
     const doi=w.doi?`<a href="https://doi.org/${esc(w.doi)}" rel="noopener">DOI</a>`:'';
     const claims=(w.claims||[]).length?`<div class="claims">${w.claims.map(c=>`<span>${hl(c,q)}</span>`).join('')}</div>`:'';
-    const flags=shownC.filter(c=>c.flag).map(c=>`<div class="flag">${S.multi&&!bk?esc((S.books[c.book].short||c.book)+': '):''}${esc(c.loc)} ${esc(c.flag)}</div>`).join('');
-    return `<li class="entry" id="w-${w.id}"><div class="yr">${anchor}${esc(w.year)}</div><div class="body"><div class="cit">${body}</div><div class="meta">${badges}<span class="kind">${KIND[w.type]||w.type}</span>${notes}${oa}${doi}<a href="#w-${w.id}" aria-label="Link to this entry">#</a></div>${claims}${flags}</div></li>`;
+    return `<li class="entry" id="w-${w.id}"><div class="yr">${anchor}${esc(w.year)}</div><div class="body"><div class="cit">${body}</div><div class="meta">${badges}<span class="kind">${KIND[w.type]||w.type}</span>${notes}${oa}${doi}<a href="#w-${w.id}" aria-label="Link to this entry">#</a></div>${claims}</div></li>`;
   }).join(''):'<li class="empty">No references match. Clear the search or switch filters.</li>';
   const have=new Set(s==='az'?S.shown.map(w=>(w.sortName[0]||'#').toUpperCase()):[]);
   $('letters').innerHTML=s==='az'?'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>have.has(l)?`<a href="#L-${l}">${l}</a>`:`<span>${l}</span>`).join(''):'';
