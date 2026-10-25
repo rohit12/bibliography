@@ -17,4 +17,4 @@ aws cloudformation deploy --region us-east-1 --stack-name bibliography-site \
   --parameter-overrides DomainName=bib.example.com HostedZoneId=Z... GitHubRepo=owner/bibliography
 ```
 
-Copy the stack outputs into the repository's Actions variables `AWS_ROLE_ARN`, `S3_BUCKET` and `CLOUDFRONT_DISTRIBUTION_ID`. After that, every push to `main` deploys.
+Put the stack outputs in the `env` block of `.github/workflows/deploy.yml`. After that, every push to `main` deploys.
