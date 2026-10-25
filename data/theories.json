@@ -1,0 +1,176 @@
+[
+ {
+  "id": "unified-growth",
+  "title": "From Malthusian stagnation to sustained growth",
+  "books": ["galor-2022"],
+  "summary": "Population and technology fed each other for millennia; once technological change rewarded education, families traded quantity of children for quality and growth took off.",
+  "steps": [
+   ["population_size", "technological_progress", "+"],
+   ["technological_progress", "population_size", "+"],
+   ["malthusian_stagnation", "economic_growth", "-"],
+   ["technological_progress", "human_capital", "+"],
+   ["industrialization", "human_capital", "+"],
+   ["human_capital", "technological_progress", "+"],
+   ["human_capital", "fertility", "-"],
+   ["fertility", "human_capital", "-"],
+   ["female_labour", "fertility", "-"],
+   ["industrialization", "child_labour", "-"],
+   ["human_capital", "economic_growth", "+"]
+  ]
+ },
+ {
+  "id": "diversity-hump",
+  "title": "Out of Africa: diversity and development",
+  "books": ["galor-2022"],
+  "summary": "Diversity falls with migratory distance from East Africa; it spurs innovation but erodes cohesion, so intermediate levels are best for development.",
+  "steps": [
+   ["migratory_distance", "genetic_diversity", "-"],
+   ["genetic_diversity", "innovation", "+"],
+   ["population_diversity", "innovation", "+"],
+   ["genetic_diversity", "social_cohesion", "-"],
+   ["population_diversity", "social_cohesion", "-"],
+   ["social_cohesion", "economic_growth", "+"],
+   ["genetic_diversity", "economic_growth", "~"]
+  ]
+ },
+ {
+  "id": "deep-roots",
+  "title": "Geography, agriculture and culture as deep roots of prosperity",
+  "books": ["galor-2022"],
+  "summary": "Biogeography set the timing of farming and the crops grown; these shaped states, future orientation and gender norms, and institutions and culture carry the effects forward.",
+  "steps": [
+   ["biogeography", "neolithic_transition", "+"],
+   ["neolithic_transition", "population_size", "+"],
+   ["neolithic_transition", "technological_progress", "+"],
+   ["neolithic_transition", "economic_growth", "0"],
+   ["crop_type", "state_formation", "+"],
+   ["agricultural_productivity", "patience", "+"],
+   ["patience", "economic_growth", "+"],
+   ["plough", "gender_norms", "-"],
+   ["disease_environment", "economic_growth", "-"],
+   ["cultural_traits", "institutions", "+"],
+   ["colonialism", "institutions", "-"],
+   ["institutions", "economic_growth", "+"]
+  ]
+ },
+ {
+  "id": "church-weird",
+  "title": "The Church dissolved intensive kinship, producing WEIRD psychology",
+  "books": ["henrich-2020"],
+  "summary": "The Western Church's marriage and family programme broke up clans and cousin marriage; weaker kinship made people more individualistic, analytic, impartial and trusting of strangers.",
+  "steps": [
+   ["church_mfp", "cousin_marriage", "-"],
+   ["church_mfp", "kinship_intensity", "-"],
+   ["church_exposure", "kinship_intensity", "-"],
+   ["kinship_intensity", "individualism", "-"],
+   ["kinship_intensity", "conformity", "+"],
+   ["kinship_intensity", "impersonal_prosociality", "-"],
+   ["cousin_marriage", "impersonal_prosociality", "-"],
+   ["kinship_intensity", "moral_universalism", "-"],
+   ["kinship_intensity", "intentionality", "-"],
+   ["kinship_intensity", "analytic_thinking", "-"],
+   ["kinship_intensity", "guilt_shame", "+"]
+  ]
+ },
+ {
+  "id": "weird-institutions",
+  "title": "Weak kinship opened the way to towns, law and representative government",
+  "books": ["henrich-2020"],
+  "summary": "Freed from clans, Europeans formed voluntary associations — charter towns, guilds, universities — whose competition produced impersonal law and representative government.",
+  "steps": [
+   ["church_mfp", "voluntary_associations", "+"],
+   ["church_mfp", "urbanization", "+"],
+   ["voluntary_associations", "rule_of_law", "+"],
+   ["intergroup_competition", "institutions", "+"],
+   ["individualism", "institutions", "+"],
+   ["church_exposure", "democracy", "+"],
+   ["kinship_intensity", "democracy", "-"],
+   ["cousin_marriage", "democracy", "-"]
+  ]
+ },
+ {
+  "id": "markets-competition",
+  "title": "Markets and benign competition built impersonal prosociality",
+  "books": ["henrich-2020"],
+  "summary": "Market integration and competition between groups raise trust and fairness toward strangers, patience and work effort, which in turn feed prosperity.",
+  "steps": [
+   ["market_integration", "impersonal_prosociality", "+"],
+   ["intergroup_competition", "impersonal_prosociality", "+"],
+   ["market_integration", "patience", "+"],
+   ["market_integration", "work_hours", "+"],
+   ["protestantism", "work_hours", "+"],
+   ["patience", "economic_growth", "+"],
+   ["impersonal_prosociality", "economic_growth", "+"]
+  ]
+ },
+ {
+  "id": "big-gods",
+  "title": "Moralizing gods and ritual scaled up cooperation",
+  "books": ["henrich-2020"],
+  "summary": "Rituals bind groups, and beliefs in punishing, all-seeing gods extend fairness to strangers, letting societies grow larger.",
+  "steps": [
+   ["ritual", "social_cohesion", "+"],
+   ["intergroup_competition", "social_complexity", "+"],
+   ["social_complexity", "moralizing_gods", "+"],
+   ["moralizing_gods", "impersonal_prosociality", "+"],
+   ["moralizing_gods", "social_complexity", "+"]
+  ]
+ },
+ {
+  "id": "monogamy",
+  "title": "Monogamous marriage tamed male competition",
+  "books": ["henrich-2020"],
+  "summary": "Polygyny creates pools of unmarried men and higher testosterone; imposed monogamy lowers crime and inequality and raises trust and self-control.",
+  "steps": [
+   ["church_mfp", "polygyny", "-"],
+   ["polygyny", "inequality", "+"],
+   ["polygyny", "hormones", "+"],
+   ["nuclear_family", "hormones", "-"],
+   ["polygyny", "rule_of_law", "-"],
+   ["nuclear_family", "impersonal_prosociality", "+"]
+  ]
+ },
+ {
+  "id": "collective-brain",
+  "title": "Bigger, better-connected collective brains drove innovation",
+  "books": ["henrich-2020"],
+  "summary": "Cities, associations, literacy and individualism widened the flow of ideas, so innovation accelerated long before industrialization.",
+  "steps": [
+   ["protestantism", "literacy", "+"],
+   ["printing", "collective_brain", "+"],
+   ["urbanization", "innovation", "+"],
+   ["voluntary_associations", "science", "+"],
+   ["voluntary_associations", "innovation", "+"],
+   ["migration", "innovation", "+"],
+   ["individualism", "innovation", "+"],
+   ["collective_brain", "innovation", "+"]
+  ]
+ },
+ {
+  "id": "rice-clans",
+  "title": "Rice and irrigation sustain clans and holistic thinking",
+  "books": ["henrich-2020"],
+  "summary": "Paddy rice and irrigation reward clan-based cooperation, which goes with less analytic and less individualistic psychology.",
+  "steps": [
+   ["crop_type", "clans", "+"],
+   ["irrigation", "clans", "+"],
+   ["crop_type", "analytic_thinking", "-"],
+   ["irrigation", "individualism", "-"]
+  ]
+ },
+ {
+  "id": "literacy-route",
+  "kind": "synthesis",
+  "title": "Synthesis: Protestant literacy as the bridge from culture to the demographic transition",
+  "books": ["galor-2022", "henrich-2020"],
+  "summary": "Henrich's Protestant literacy meets Galor's human-capital engine: scriptural literacy raises human capital, which lowers fertility and lifts growth.",
+  "steps": [
+   ["protestantism", "literacy", "+"],
+   ["printing", "literacy", "+"],
+   ["religion", "human_capital", "+"],
+   ["protestantism", "human_capital", "+"],
+   ["human_capital", "fertility", "-"],
+   ["human_capital", "economic_growth", "+"]
+  ]
+ }
+]

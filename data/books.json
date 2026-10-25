@@ -106,5 +106,104 @@
    }
   ],
   "added": "2026-10-24"
+ },
+ {
+  "id": "henrich-2020",
+  "short": "Henrich",
+  "title": "The WEIRDest People in the World",
+  "author": "Joseph Henrich",
+  "publisher": "Allen Lane",
+  "year": 2020,
+  "chapters": {
+   "Prelude": "Your Brain Has Been Modified",
+   "Ch 1": "WEIRD Psychology",
+   "Ch 2": "Making a Cultural Species",
+   "Ch 3": "Clans, States, and Why You Can’t Get Here from There",
+   "Ch 4": "The Gods Are Watching. Behave!",
+   "Ch 5": "WEIRD Families",
+   "Ch 6": "Psychological Differences, Families, and the Church",
+   "Ch 7": "Europe and Asia",
+   "Ch 8": "WEIRD Monogamy",
+   "Ch 9": "Of Commerce and Cooperation",
+   "Ch 10": "Domesticating the Competition",
+   "Ch 11": "Market Mentalities",
+   "Ch 12": "Law, Science, and Religion",
+   "Ch 13": "Escape Velocity",
+   "Ch 14": "The Dark Matter of History"
+  },
+  "missing": [
+   {
+    "cite": "Weber’s (1958)",
+    "where": "Prelude n26",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Talhelm (1999)",
+    "where": "Ch 1 n52",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Garfield (2016)",
+    "where": "Ch 2 n12",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Willard (2020)",
+    "where": "Ch 4 n9",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Whitehouse et al. (2019)",
+    "where": "Ch 4 n27",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Beheim et al. (2019)",
+    "where": "Ch 4 n27",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Antiquity (1995)",
+    "where": "Ch 4 n37",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Reniers (2001)",
+    "where": "Ch 7 n8",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Reformation (1517)",
+    "where": "Ch 11 n5",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Plomin (2000)",
+    "where": "Ch 11 n42",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Greif (2012)",
+    "where": "Ch 13 n61",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Putterman (2001)",
+    "where": "Ch 14 n5",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Bentzen (2016)",
+    "where": "Ch 14 n7",
+    "note": "Cited in a note; no matching bibliography entry."
+   },
+   {
+    "cite": "Ross et al. (2017)",
+    "where": "Ch 14 n11",
+    "note": "Cited in a note; no matching bibliography entry."
+   }
+  ],
+  "data_sources": [],
+  "added": "2026-10-24"
  }
 ]

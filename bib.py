@@ -2,7 +2,13 @@
 """bib — a cross-book bibliography kept as plain JSON in git.
 
 Layout
-  data/      public by construction: works (each with the endnotes citing it), books
+  data/      public by construction:
+               works.json     each work, with the endnotes citing it
+               books.json     each book and its chapters
+               endnotes.json  one paraphrased claim per endnote, with cause→effect
+                              links between concepts and the groups it is about
+               theories.json  named chains of links (a book's argument, or a synthesis)
+               concepts.json, groups.json   the vocabularies links and groups use
   private/   never committed or published: reading verdicts, notes, local extensions
   site/      the page; `build` writes the public data files into site/data/
 
@@ -37,29 +43,43 @@ SITE_DATA = SITE / "data"
 
 WORKS_F = DATA / "works.json"
 BOOKS_F = DATA / "books.json"
+ENDNOTES_F = DATA / "endnotes.json"
+THEORIES_F = DATA / "theories.json"
+CONCEPTS_F = DATA / "concepts.json"
+GROUPS_F = DATA / "groups.json"
 NOTES_F = PRIVATE / "notes.json"
 
 def set_root(path) -> None:
     """Point the module at another checkout (used by tests)."""
     global ROOT, DATA, PRIVATE, SITE, SITE_DATA, WORKS_F, BOOKS_F, NOTES_F
+    global ENDNOTES_F, THEORIES_F, CONCEPTS_F, GROUPS_F
     ROOT = Path(path).resolve()
     DATA, PRIVATE, SITE = ROOT / "data", ROOT / "private", ROOT / "site"
     SITE_DATA = SITE / "data"
     WORKS_F, BOOKS_F = DATA / "works.json", DATA / "books.json"
+    ENDNOTES_F, THEORIES_F = DATA / "endnotes.json", DATA / "theories.json"
+    CONCEPTS_F, GROUPS_F = DATA / "concepts.json", DATA / "groups.json"
     NOTES_F = PRIVATE / "notes.json"
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 TYPES = {"article", "book", "chapter", "working-paper", "dataset"}
 STATUSES = {"unchecked", "replicated", "contested", "failed-replication", "retracted"}
 VERDICTS = {"read", "skimmed", "unread"}
+# How a link reads: raises, lowers, no effect, rises-then-falls, related (direction unstated)
+SIGNS = {"+": "raises", "-": "lowers", "0": "no effect on", "~": "has a hump-shaped effect on", "?": "is linked to"}
+# Optional evidence type for a work, set with `tag --method`
+METHODS = {"experiment", "natural-experiment", "regression", "ethnography", "history",
+           "dataset", "model", "review", "genetics", "archaeology"}
+GROUP_KINDS = {"place", "religion", "social"}
 
 # Only these work fields are ever written to the public site. Anything else
 # you add to a work stays in the repo but is never published.
 PUBLIC_WORK_FIELDS = [
     "id", "authors", "year", "title", "venue", "type", "citation", "doi",
-    "status", "claims", "oa", "cited_in", "listed_in",
+    "status", "method", "claims", "oa", "cited_in", "listed_in",
 ]
+PUBLIC_ENDNOTE_FIELDS = ["book", "loc", "claim", "links", "about"]
 PUBLIC_OA_FIELDS = ["id", "cited_by_count", "fwci", "is_retracted", "topics", "retrieved"]
 
 STOPWORDS = {
@@ -200,15 +220,26 @@ class ImportReport:
 
 
 class DB:
-    def __init__(self, works: list, citations: list, books: list):
+    def __init__(self, works: list, citations: list, books: list,
+                 endnotes: list | None = None, theories: list | None = None,
+                 concepts: list | None = None, groups: list | None = None):
         self.works = {w["id"]: w for w in works}
         self.citations = citations
         self.books = {b["id"]: b for b in books}
+        self.endnotes = list(endnotes or [])
+        self.theories = list(theories or [])
+        self.concepts = {c["id"]: c for c in (concepts or [])}
+        self.groups = {g["id"]: g for g in (groups or [])}
 
     # -- io --------------------------------------------------------------
     @classmethod
     def load(cls) -> "DB":
-        return cls.from_files(load_json(WORKS_F, []), load_json(BOOKS_F, []))
+        db = cls.from_files(load_json(WORKS_F, []), load_json(BOOKS_F, []))
+        db.endnotes = load_json(ENDNOTES_F, [])
+        db.theories = load_json(THEORIES_F, [])
+        db.concepts = {c["id"]: c for c in load_json(CONCEPTS_F, [])}
+        db.groups = {g["id"]: g for g in load_json(GROUPS_F, [])}
+        return db
 
     @classmethod
     def from_files(cls, raw_works: list, raw_books: list) -> "DB":
@@ -261,11 +292,73 @@ class DB:
         dump_json(WORKS_F, works)
         dump_json(BOOKS_F, books)
 
+    def save_endnotes(self):
+        orders = {b: self.chapter_order(b) for b in self.books}
+        self.endnotes.sort(key=lambda n: (n["book"], loc_key(n["loc"], orders.get(n["book"], []))))
+        lines = [json.dumps({k: n[k] for k in PUBLIC_ENDNOTE_FIELDS if n.get(k)}, ensure_ascii=False)
+                 for n in self.endnotes]
+        # one endnote per line keeps diffs readable
+        ENDNOTES_F.parent.mkdir(parents=True, exist_ok=True)
+        ENDNOTES_F.write_text("[\n" + ",\n".join(lines) + "\n]\n", encoding="utf-8")
+
+    def import_endnotes(self, book: str, rows: list, replace: bool = True) -> list[str]:
+        """Load claim rows {loc, claim, links?, about?} for one book. Returns problems;
+        nothing is changed if there are any."""
+        if book not in self.books:
+            return [f"no book {book}"]
+        probs, seen, clean = [], set(), []
+        for i, r in enumerate(rows, 1):
+            loc, claim = (r.get("loc") or "").strip(), (r.get("claim") or "").strip()
+            if not loc or not claim:
+                probs.append(f"row {i}: needs loc and claim")
+                continue
+            if loc in seen:
+                probs.append(f"{loc}: duplicate")
+            seen.add(loc)
+            n = {"book": book, "loc": loc, "claim": claim}
+            if r.get("links"):
+                n["links"] = [list(lk) for lk in r["links"]]
+            if r.get("about"):
+                n["about"] = list(dict.fromkeys(r["about"]))
+            probs += self._endnote_problems(n)
+            clean.append(n)
+        if probs:
+            return probs
+        keep = [n for n in self.endnotes if n["book"] != book] if replace else \
+               [n for n in self.endnotes if not (n["book"] == book and n["loc"] in seen)]
+        self.endnotes = keep + clean
+        return []
+
+    def _endnote_problems(self, n: dict) -> list[str]:
+        where = f"{n.get('book')} {n.get('loc')}"
+        out = []
+        for lk in n.get("links", []):
+            if len(lk) != 3:
+                out.append(f"{where}: link must be [from, to, sign]")
+                continue
+            a, b, s = lk
+            for x in (a, b):
+                if self.concepts and x not in self.concepts:
+                    out.append(f"{where}: unknown concept {x}")
+            if s not in SIGNS:
+                out.append(f"{where}: unknown sign {s!r}")
+        for g in n.get("about", []):
+            if self.groups and g not in self.groups:
+                out.append(f"{where}: unknown group {g}")
+        return out
+
     # -- derived views ---------------------------------------------------
     def cites_by_work(self) -> dict[str, list]:
         out: dict[str, list] = {}
         for c in self.citations:
             out.setdefault(c["work"], []).append(c)
+        return out
+
+    def works_at(self) -> dict[tuple, list]:
+        """(book, loc) -> work ids cited in that endnote."""
+        out: dict[tuple, list] = {}
+        for c in self.citations:
+            out.setdefault((c["book"], c["loc"]), []).append(c["work"])
         return out
 
     def books_for(self, wid: str) -> list[str]:
@@ -362,6 +455,27 @@ class DB:
             self.works, self.citations, self.books = fresh.works, fresh.citations, fresh.books
         return report
 
+    def refresh_book(self, payload: dict, dry_run: bool = False) -> list:
+        """Add citations found in a re-extracted payload to works this book already lists.
+        Never removes anything; returns [(work_id, loc)] added."""
+        bid = payload["book"]["id"]
+        if bid not in self.books:
+            raise SystemExit(f"No book {bid}; use add-book.")
+        listed = set(self.books[bid].get("references", []))
+        have = {(c["work"], c["loc"]) for c in self.citations if c["book"] == bid}
+        added = []
+        for ref in payload["references"]:
+            wid, _, confident = self.find_match(dict(ref, type=ref.get("type", "article")))
+            if not (wid and confident and wid in listed):
+                continue
+            for loc in ref.get("cited_in", []):
+                if (wid, loc) not in have:
+                    have.add((wid, loc))
+                    added.append((wid, loc))
+                    if not dry_run:
+                        self.citations.append({"work": wid, "book": bid, "loc": loc})
+        return added
+
     def remove_book(self, bid: str):
         if bid not in self.books:
             raise SystemExit(f"No book {bid}")
@@ -431,7 +545,301 @@ class DB:
         for wid in load_json(NOTES_F, {}):
             if wid not in self.works:
                 errs.append(f"private note for unknown work {wid}")
+        for w in self.works.values():
+            if w.get("method") and w["method"] not in METHODS:
+                errs.append(f"{w['id']}: unknown method {w['method']}")
+        for c in self.concepts.values():
+            if not c.get("label"):
+                errs.append(f"concept {c['id']}: missing label")
+        for g in self.groups.values():
+            if g.get("kind") not in GROUP_KINDS:
+                errs.append(f"group {g['id']}: kind must be one of {sorted(GROUP_KINDS)}")
+        seen = set()
+        for n in self.endnotes:
+            key = (n.get("book"), n.get("loc"))
+            if key in seen:
+                errs.append(f"duplicate endnote {key[0]} {key[1]}")
+            seen.add(key)
+            if n.get("book") not in self.books:
+                errs.append(f"endnote from unknown book {n.get('book')}")
+            if not n.get("claim"):
+                errs.append(f"endnote {key[0]} {key[1]}: missing claim")
+            errs += self._endnote_problems(n)
+        tids = set()
+        for t in self.theories:
+            tid = t.get("id", "?")
+            if tid in tids:
+                errs.append(f"duplicate theory {tid}")
+            tids.add(tid)
+            for b in t.get("books", []):
+                if b not in self.books:
+                    errs.append(f"theory {tid}: unknown book {b}")
+            if not t.get("steps"):
+                errs.append(f"theory {tid}: no steps")
+            for st in t.get("steps", []):
+                errs += [e.replace(" None", "") for e in
+                         self._endnote_problems({"book": f"theory {tid}", "loc": None, "links": [st]})]
         return errs
+
+
+# ----------------------------------------------------------------------------
+# analysis: links, pillars, connections, comparisons
+#
+# An endnote's links say what the book claims at that point ("plough lowers
+# gender_norms"). The works cited in the endnote are its evidence. Everything
+# below is derived from those two facts, so it works for any set of books.
+# ----------------------------------------------------------------------------
+
+OPPOSED = {("+", "-"), ("-", "+"), ("+", "0"), ("0", "+"), ("-", "0"), ("0", "-")}
+
+
+def link_index(db: DB) -> dict:
+    """(from, to) -> {"notes": [(book, loc, sign)], "books": {book: {sign: count}}}."""
+    idx: dict = {}
+    for n in db.endnotes:
+        for a, b, s in n.get("links", []):
+            e = idx.setdefault((a, b), {"notes": [], "books": {}})
+            e["notes"].append((n["book"], n["loc"], s))
+            bs = e["books"].setdefault(n["book"], {})
+            bs[s] = bs.get(s, 0) + 1
+    return idx
+
+
+def surnames(w: dict) -> set[str]:
+    out = set()
+    for p in parse_authors(w.get("authors", "")):
+        name = p.get("family") or (p.get("literal") if p.get("literal") != "others" else "")
+        key = re.sub(r"[^a-z]", "", fold(name or "").lower())
+        if key:
+            out.add(key)
+    return out
+
+
+def author_clusters(db: DB, wids) -> list[list[str]]:
+    """Group works that share any author: each group counts as one independent source."""
+    wids = [w for w in dict.fromkeys(wids) if w in db.works]
+    parent = {w: w for w in wids}
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    owner: dict[str, str] = {}
+    for w in wids:
+        for s in surnames(db.works[w]):
+            if s in owner:
+                parent[find(w)] = find(owner[s])
+            else:
+                owner[s] = w
+    groups: dict[str, list] = {}
+    for w in wids:
+        groups.setdefault(find(w), []).append(w)
+    return sorted(groups.values(), key=len, reverse=True)
+
+
+def evidence(w: dict) -> dict:
+    oa = w.get("oa") or {}
+    return {"cites": oa.get("cited_by_count"), "fwci": oa.get("fwci"), "status": w.get("status", "unchecked"),
+            "method": w.get("method"), "type": w.get("type"),
+            "weak": w.get("status") in {"contested", "failed-replication", "retracted"} or bool(oa.get("is_retracted"))}
+
+
+def step_support(db: DB, step, books=None, idx=None, at=None) -> dict:
+    """Endnotes and works behind one link. Support comes from the theory's own books;
+    the same link stated in other books is corroboration; opposite signs are challenges."""
+    idx = idx if idx is not None else link_index(db)
+    at = at if at is not None else db.works_at()
+    a, b, s = step
+    own, also, against = [], [], []
+    for book, loc, sign in idx.get((a, b), {}).get("notes", []):
+        if sign == s:
+            (own if (not books or book in books) else also).append((book, loc))
+        elif (sign, s) in OPPOSED:
+            against.append((book, loc, sign))
+    works = list(dict.fromkeys(w for k in own for w in at.get(k, [])))
+    return {"from": a, "to": b, "sign": s, "notes": own, "also": also, "against": against,
+            "works": works, "sources": len(author_clusters(db, works))}
+
+
+def pillars(db: DB, theory: dict) -> dict:
+    """Which works hold a theory up.
+
+    load      sum over steps of the work's share of that step's support
+    critical  steps that would lose all support without this work
+    steps     how many steps the work supports"""
+    idx, at = link_index(db), db.works_at()
+    books = theory.get("books") or None
+    steps = [step_support(db, st, books, idx, at) for st in theory["steps"]]
+    per: dict[str, dict] = {}
+    for i, st in enumerate(steps):
+        n = len(st["works"])
+        for w in st["works"]:
+            p = per.setdefault(w, {"id": w, "load": 0.0, "steps": [], "critical": []})
+            p["load"] += 1 / n
+            p["steps"].append(i)
+            if n == 1:
+                p["critical"].append(i)
+        # a single author cluster makes every work in it critical together
+        clusters = author_clusters(db, st["works"])
+        if len(clusters) == 1 and n > 1:
+            for w in clusters[0]:
+                if i not in per[w]["critical"]:
+                    per[w]["critical"].append(i)
+    ranked = sorted(per.values(), key=lambda p: (-len(p["critical"]), -p["load"], p["id"]))
+    for p in ranked:
+        p["load"] = round(p["load"], 3)
+        p.update(evidence(db.works[p["id"]]))
+    return {"id": theory["id"], "steps": steps, "pillars": ranked,
+            "unsupported": [i for i, st in enumerate(steps) if not st["works"]],
+            "fragile": [i for i, st in enumerate(steps) if 0 < st["sources"] <= 1]}
+
+
+def book_pillars(db: DB, book: str, top: int = 25) -> list[dict]:
+    """Works ranked by how much of a book's linked argument rests on them."""
+    at = db.works_at()
+    load: dict[str, float] = {}
+    for n in db.endnotes:
+        if n["book"] != book or not n.get("links"):
+            continue
+        ws = at.get((book, n["loc"]), [])
+        for w in ws:
+            load[w] = load.get(w, 0) + len(n["links"]) / len(ws)
+    out = [{"id": w, "load": round(v, 3), **evidence(db.works[w])} for w, v in load.items() if w in db.works]
+    return sorted(out, key=lambda p: (-p["load"], p["id"]))[:top]
+
+
+def connections(db: DB, min_support: int = 1, top: int = 60) -> dict:
+    """Bridges, shared and contested links, rival explanations and candidate chains across books."""
+    idx = link_index(db)
+    books = sorted(db.books)
+    concept_books: dict[str, dict] = {}
+    for n in db.endnotes:
+        for a, b, _ in n.get("links", []):
+            for c in {a, b}:
+                concept_books.setdefault(c, {}).setdefault(n["book"], set()).add(n["loc"])
+    bridges = sorted(({"concept": c, "books": {b: len(v) for b, v in bs.items()}}
+                      for c, bs in concept_books.items() if len(bs) > 1),
+                     key=lambda x: (-min(x["books"].values()), x["concept"]))
+
+    shared, contested = [], []
+    for (a, b), e in idx.items():
+        signs = {s for bs in e["books"].values() for s in bs}
+        if len(e["books"]) > 1:
+            shared.append({"from": a, "to": b, "books": e["books"]})
+        if any((x, y) in OPPOSED for x in signs for y in signs):
+            contested.append({"from": a, "to": b, "books": e["books"],
+                              "notes": [list(t) for t in e["notes"]]})
+    shared.sort(key=lambda x: (-len(x["books"]), -sum(sum(v.values()) for v in x["books"].values())))
+    contested.sort(key=lambda x: -len(x["notes"]))
+
+    # rivals: the same outcome explained by different causes in different books
+    causes: dict[str, dict] = {}
+    for (a, b), e in idx.items():
+        for bk, ss in e["books"].items():
+            n = sum(v for s, v in ss.items() if s != "?")
+            if n:
+                causes.setdefault(b, {}).setdefault(bk, {})[a] = n
+    rivals = []
+    for target, per in causes.items():
+        if len(per) < 2:
+            continue
+        sets = {bk: set(v) for bk, v in per.items()}
+        common = set.intersection(*sets.values())
+        only = {bk: sorted(s - set().union(*(o for k, o in sets.items() if k != bk)),
+                           key=lambda c: -per[bk][c]) for bk, s in sets.items()}
+        if all(only.values()):
+            rivals.append({"outcome": target, "shared": sorted(common), "only": only,
+                           "weight": sum(sum(v.values()) for v in per.values())})
+    rivals.sort(key=lambda r: -r["weight"])
+
+    # candidate chains: A→B in one book, B→C in another, A→C stated nowhere
+    def strong(e, bk):
+        ss = e["books"].get(bk, {})
+        best = max((s for s in ss if s in "+-"), key=lambda s: ss[s], default=None)
+        return (best, ss[best]) if best else (None, 0)
+
+    out_edges: dict[str, list] = {}
+    for (a, b), e in idx.items():
+        for bk in e["books"]:
+            s, n = strong(e, bk)
+            if s and n >= min_support:
+                out_edges.setdefault(a, []).append((b, bk, s, n))
+    chains = []
+    for a, firsts in out_edges.items():
+        for b, bk1, s1, n1 in firsts:
+            for c, bk2, s2, n2 in out_edges.get(b, []):
+                if bk2 == bk1 or c == a or (a, c) in idx:
+                    continue
+                chains.append({"path": [a, b, c], "books": [bk1, bk2], "signs": [s1, s2],
+                               "sign": "+" if s1 == s2 else "-", "support": min(n1, n2)})
+    chains.sort(key=lambda x: (-x["support"], x["path"]))
+
+    # works cited in more than one book, with what each book uses them for
+    at = db.works_at()
+    uses: dict[str, dict] = {}
+    for n in db.endnotes:
+        for w in at.get((n["book"], n["loc"]), []):
+            uses.setdefault(w, {}).setdefault(n["book"], []).append(n["loc"])
+    shared_works = sorted(({"id": w, "books": u} for w, u in uses.items() if len(u) > 1),
+                          key=lambda x: (-len(x["books"]), -sum(len(v) for v in x["books"].values())))
+    return {"books": books, "bridges": bridges[:top], "shared": shared[:top], "contested": contested[:top],
+            "rivals": rivals[:top], "chains": chains[:top], "shared_works": shared_works[:top]}
+
+
+def gaps(db: DB) -> dict:
+    """Where the evidence is thin: theory steps with one source, groups only one book covers,
+    concepts only one book uses."""
+    fragile = []
+    for t in db.theories:
+        p = pillars(db, t)
+        for i in p["unsupported"] + p["fragile"]:
+            st = p["steps"][i]
+            fragile.append({"theory": t["id"], "step": [st["from"], st["to"], st["sign"]],
+                            "works": st["works"], "sources": st["sources"]})
+    by_group: dict[str, dict] = {}
+    by_concept: dict[str, dict] = {}
+    for n in db.endnotes:
+        for g in n.get("about", []):
+            by_group.setdefault(g, {}).setdefault(n["book"], 0)
+            by_group[g][n["book"]] += 1
+        for a, b, _ in n.get("links", []):
+            for c in {a, b}:
+                by_concept.setdefault(c, {}).setdefault(n["book"], 0)
+                by_concept[c][n["book"]] += 1
+    nbooks = len(db.books)
+    one_book = lambda d: sorted(({"id": k, "books": v} for k, v in d.items() if len(v) == 1 and nbooks > 1),
+                                key=lambda x: -sum(x["books"].values()))
+    return {"fragile_steps": fragile, "groups_one_book": one_book(by_group)[:40],
+            "concepts_one_book": one_book(by_concept)[:40],
+            "groups_untouched": sorted(set(db.groups) - set(by_group))}
+
+
+def compare(db: DB, groups: list[str] | None = None) -> dict:
+    """Group × concept grid: which endnotes say something about a group and a mechanism."""
+    groups = groups or sorted(db.groups)
+    cells: dict[str, dict] = {g: {} for g in groups}
+    for n in db.endnotes:
+        about = [g for g in n.get("about", []) if g in cells]
+        if not about:
+            continue
+        concepts = {c for a, b, _ in n.get("links", []) for c in (a, b)} or {"_none"}
+        for g in about:
+            for c in concepts:
+                cells[g].setdefault(c, []).append([n["book"], n["loc"]])
+    return {"groups": groups, "cells": cells}
+
+
+def analysis(db: DB) -> dict:
+    return {"theories": {t["id"]: pillars(db, t) for t in db.theories},
+            "books": {b: book_pillars(db, b) for b in db.books},
+            "connections": connections(db), "gaps": gaps(db)}
+
+
+def link_text(db: DB, a: str, b: str, s: str) -> str:
+    lab = lambda c: db.concepts.get(c, {}).get("label", c)
+    return f"{lab(a)} {SIGNS.get(s, s)} {lab(b)}"
 
 
 # ----------------------------------------------------------------------------
@@ -656,12 +1064,13 @@ def leak_check(site_dir: Path | None = None) -> list[str]:
             if s in text:
                 problems.append(f"private text found in {p.relative_to(ROOT)}: {s[:40]!r}")
                 break
-    for p in site_dir.rglob("works.json"):
-        for w in load_json(p, []):
-            extra = set(w) - set(PUBLIC_WORK_FIELDS)
-            if extra:
-                problems.append(f"non-public fields {sorted(extra)} in {p.relative_to(ROOT)}")
-                break
+    for name, allowed in (("works.json", PUBLIC_WORK_FIELDS), ("endnotes.json", PUBLIC_ENDNOTE_FIELDS)):
+        for p in site_dir.rglob(name):
+            for row in load_json(p, []):
+                extra = set(row) - set(allowed)
+                if extra:
+                    problems.append(f"non-public fields {sorted(extra)} in {p.relative_to(ROOT)}")
+                    break
     return problems
 
 
@@ -673,11 +1082,18 @@ def build(db: DB) -> dict:
             f.unlink()
     dump_json(SITE_DATA / "works.json", works, compact=True)
     dump_json(SITE_DATA / "books.json", file_books, compact=True)
+    notes = [{k: n[k] for k in PUBLIC_ENDNOTE_FIELDS if n.get(k)} for n in db.endnotes]
+    dump_json(SITE_DATA / "endnotes.json", notes, compact=True)
+    dump_json(SITE_DATA / "theories.json", db.theories, compact=True)
+    dump_json(SITE_DATA / "concepts.json", list(db.concepts.values()), compact=True)
+    dump_json(SITE_DATA / "groups.json", list(db.groups.values()), compact=True)
+    dump_json(SITE_DATA / "analysis.json", analysis(db), compact=True)
     raw = sorted(db.works.values(), key=lambda w: w["id"])
     (SITE_DATA / "bibliography.bib").write_text(to_bibtex(raw), encoding="utf-8")
     (SITE_DATA / "bibliography.csv").write_text(to_csv(db, raw), encoding="utf-8")
     meta = {"schema": SCHEMA_VERSION, "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "works": len(works), "citations": len(db.citations), "books": len(db.books)}
+            "works": len(works), "citations": len(db.citations), "books": len(db.books),
+            "endnotes": len(notes), "theories": len(db.theories), "signs": SIGNS}
     dump_json(SITE_DATA / "meta.json", meta)
     problems = leak_check()
     if problems:
@@ -769,6 +1185,16 @@ def cmd_add_book(db, a):
         db.save()
 
 
+def cmd_refresh_book(db, a):
+    payload = load_json(Path(a.file), None)
+    added = db.refresh_book(payload, dry_run=a.dry_run)
+    for wid, loc in added:
+        print(f"  + {wid}  {loc}")
+    print(f"{len(added)} citations {'would be ' if a.dry_run else ''}added.")
+    if not a.dry_run:
+        db.save()
+
+
 def cmd_remove_book(db, a):
     orphans = db.remove_book(a.book)
     db.save()
@@ -800,6 +1226,10 @@ def cmd_tag(db, a):
         w["claims"] = [c for c in w.get("claims", []) if c not in a.unclaim]
     if a.doi:
         w["doi"] = a.doi.removeprefix("https://doi.org/")
+    if a.method:
+        if a.method not in METHODS:
+            raise SystemExit(f"method must be one of {sorted(METHODS)}")
+        w["method"] = a.method
     db.save()
     if a.verdict or a.note is not None:
         notes = load_json(NOTES_F, {})
@@ -825,6 +1255,112 @@ def cmd_claims(db, a):
         if a.verbose:
             for w in ws:
                 print(f"       {fmt_work(w)}  [{w.get('status')}]")
+
+
+def read_rows(path: Path) -> list:
+    """JSON list or JSON Lines."""
+    text = path.read_text(encoding="utf-8").strip()
+    if text.startswith("["):
+        return json.loads(text)
+    return [json.loads(l) for l in text.splitlines() if l.strip()]
+
+
+def cmd_import_endnotes(db, a):
+    rows = [r for f in a.files for r in read_rows(Path(f))]
+    probs = db.import_endnotes(a.book, rows, replace=not a.merge)
+    for pr in probs[:40]:
+        print("ERROR:", pr)
+    if probs:
+        raise SystemExit(f"{len(probs)} problems; nothing written.")
+    db.save_endnotes()
+    mine = [n for n in db.endnotes if n["book"] == a.book]
+    print(f"{a.book}: {len(mine)} endnotes, {sum(len(n.get('links', [])) for n in mine)} links, "
+          f"{sum(1 for n in mine if n.get('about'))} tagged with groups.")
+
+
+def cmd_theories(db, a):
+    for t in db.theories:
+        p = pillars(db, t)
+        print(f"{t['id']:<24} {len(t['steps']):>2} steps  {len(p['unsupported'])} unsupported  "
+              f"{len(p['fragile'])} single-source  {t['title']}")
+
+
+def cmd_pillars(db, a):
+    if a.book:
+        for p in book_pillars(db, a.book, a.top):
+            print(f"{p['load']:>6.2f}  {p['cites'] or '':>6}  {fmt_work(db.works[p['id']], 80)}")
+        return
+    t = next((t for t in db.theories if t["id"] == a.theory), None)
+    if not t:
+        raise SystemExit("Theory ids: " + ", ".join(t["id"] for t in db.theories))
+    p = pillars(db, t)
+    print(t["title"])
+    for i, st in enumerate(p["steps"]):
+        flag = "  ✗ no support" if not st["works"] else ("  ! one source" if st["sources"] == 1 else "")
+        print(f" {i+1:>2}. {link_text(db, st['from'], st['to'], st['sign'])}"
+              f"  [{len(st['notes'])} notes, {len(st['works'])} works, {st['sources']} sources"
+              f"{', +' + str(len(st['also'])) + ' elsewhere' if st['also'] else ''}"
+              f"{', ' + str(len(st['against'])) + ' against' if st['against'] else ''}]{flag}")
+    print("Pillars (load = share of support, ★ = a step depends on it alone):")
+    for q in p["pillars"][:a.top]:
+        star = "★" * len(q["critical"])
+        print(f"  {q['load']:>5.2f} {star:<3} {fmt_work(db.works[q['id']], 80)}"
+              + (f"  [{q['status']}]" if q["weak"] else ""))
+
+
+def cmd_connections(db, a):
+    c = connections(db)
+    lab = lambda x: db.concepts.get(x, {}).get("label", x)
+    sec = a.section
+    if sec in (None, "shared"):
+        print("Links stated in more than one book:")
+        for e in c["shared"][:a.top]:
+            print(f"  {lab(e['from'])} → {lab(e['to'])}  {e['books']}")
+    if sec in (None, "contested"):
+        print("Links with conflicting signs:")
+        for e in c["contested"][:a.top]:
+            print(f"  {lab(e['from'])} → {lab(e['to'])}  {e['books']}")
+    if sec in (None, "rivals"):
+        print("Same outcome, different causes:")
+        for r in c["rivals"][:a.top]:
+            print(f"  {lab(r['outcome'])}: " + " | ".join(f"{b}: {', '.join(v[:4])}" for b, v in r["only"].items()))
+    if sec in (None, "chains"):
+        print("Candidate chains across books (A→B in one, B→C in another, A→C in none):")
+        for ch in c["chains"][:a.top]:
+            x, y, z = ch["path"]
+            print(f"  {lab(x)} {ch['signs'][0]}→ {lab(y)} {ch['signs'][1]}→ {lab(z)}  "
+                  f"({ch['books'][0]} / {ch['books'][1]}, support {ch['support']})")
+    if sec in (None, "works"):
+        print("Works both books lean on:")
+        for w in c["shared_works"][:a.top]:
+            print(f"  {fmt_work(db.works[w['id']], 70)}  " + ", ".join(f"{b} {len(v)}" for b, v in w["books"].items()))
+
+
+def cmd_compare(db, a):
+    g = compare(db, a.groups or None)
+    lab = lambda x: db.concepts.get(x, {}).get("label", x)
+    concepts = sorted({c for row in g["cells"].values() for c in row}, key=lambda c: -sum(
+        len(g["cells"][r].get(c, [])) for r in g["groups"]))[:a.top]
+    for gid in g["groups"]:
+        row = g["cells"][gid]
+        print(f"{db.groups.get(gid, {}).get('label', gid)}: {sum(len(v) for v in row.values())} mentions")
+        for c in concepts:
+            if row.get(c):
+                print(f"   {lab(c):<40} " + ", ".join(f"{b} {l}" for b, l in row[c][:6]))
+
+
+def cmd_gaps(db, a):
+    g = gaps(db)
+    lab = lambda x: db.concepts.get(x, {}).get("label", x)
+    print("Theory steps with no support or a single source:")
+    for f in g["fragile_steps"]:
+        print(f"  {f['theory']}: {link_text(db, *f['step'])}  ({len(f['works'])} works, {f['sources']} sources)")
+    print("Groups only one book discusses:")
+    for x in g["groups_one_book"][:a.top]:
+        print(f"  {x['id']:<20} {x['books']}")
+    print("Concepts only one book uses:")
+    for x in g["concepts_one_book"][:a.top]:
+        print(f"  {lab(x['id']):<40} {x['books']}")
 
 
 def cmd_enrich(db, a):
@@ -865,7 +1401,8 @@ def cmd_build(db, a):
             print("ERROR:", e, file=sys.stderr)
         raise SystemExit("Build refused: fix validation errors first.")
     meta = build(db)
-    print(f"Built site/data: {meta['works']} works, {meta['citations']} citations, {meta['books']} books. No leaks.")
+    print(f"Built site/data: {meta['works']} works, {meta['citations']} citations, {meta['books']} books, "
+          f"{meta['endnotes']} endnotes, {meta['theories']} theories. No leaks.")
 
 
 def cmd_serve(db, a):
@@ -910,6 +1447,9 @@ def main(argv=None):
     s = sub.add_parser("add-book", help="import a book's references (see inbox/TEMPLATE.json)")
     s.add_argument("file")
     s.add_argument("--dry-run", action="store_true")
+    s = sub.add_parser("refresh-book", help="add newly found citations from a re-extracted book file")
+    s.add_argument("file")
+    s.add_argument("--dry-run", action="store_true")
     s = sub.add_parser("remove-book", help="remove a book and any works only it referenced")
     s.add_argument("book")
     s = sub.add_parser("merge", help="fold a duplicate work into another")
@@ -924,10 +1464,29 @@ def main(argv=None):
     s.add_argument("--claim", action="append", help="claim this work is used to support (repeatable)")
     s.add_argument("--unclaim", action="append")
     s.add_argument("--doi")
+    s.add_argument("--method", help="evidence type: " + " | ".join(sorted(METHODS)))
     s.add_argument("--verdict", help="private: " + " | ".join(sorted(VERDICTS)))
     s.add_argument("--note", help="private note")
     s = sub.add_parser("claims", help="list claims and how many works support each")
     s.add_argument("-v", "--verbose", action="store_true")
+
+    s = sub.add_parser("import-endnotes", help="load paraphrased endnote claims for a book (JSON or JSON Lines)")
+    s.add_argument("book")
+    s.add_argument("files", nargs="+")
+    s.add_argument("--merge", action="store_true", help="update only the endnotes given; keep the rest")
+    sub.add_parser("theories", help="list theories and how well each step is supported")
+    s = sub.add_parser("pillars", help="the works a theory (or a whole book) rests on")
+    s.add_argument("theory", nargs="?")
+    s.add_argument("--book")
+    s.add_argument("--top", type=int, default=20)
+    s = sub.add_parser("connections", help="shared and conflicting links, rivals, candidate chains across books")
+    s.add_argument("section", nargs="?", choices=["shared", "contested", "rivals", "chains", "works"])
+    s.add_argument("--top", type=int, default=15)
+    s = sub.add_parser("compare", help="what the books say about places, religions and social groups")
+    s.add_argument("groups", nargs="*")
+    s.add_argument("--top", type=int, default=12)
+    s = sub.add_parser("gaps", help="thinly supported steps, one-book groups and concepts")
+    s.add_argument("--top", type=int, default=15)
 
     s = sub.add_parser("enrich", help="add DOI, citation counts, topics, retractions from OpenAlex")
     s.add_argument("--limit", type=int)
@@ -944,8 +1503,10 @@ def main(argv=None):
     s.add_argument("--port", type=int, default=8000)
 
     handlers = {"validate": cmd_validate, "stats": cmd_stats, "search": cmd_search, "show": cmd_show,
-                "add-book": cmd_add_book, "remove-book": cmd_remove_book, "merge": cmd_merge,
+                "add-book": cmd_add_book, "refresh-book": cmd_refresh_book, "remove-book": cmd_remove_book, "merge": cmd_merge,
                 "not-dup": cmd_not_dup, "tag": cmd_tag, "claims": cmd_claims, "enrich": cmd_enrich,
+                "import-endnotes": cmd_import_endnotes, "theories": cmd_theories, "pillars": cmd_pillars,
+                "connections": cmd_connections, "compare": cmd_compare, "gaps": cmd_gaps,
                 "export": cmd_export, "build": cmd_build, "serve": cmd_serve}
     load_extensions(sub, handlers)
 

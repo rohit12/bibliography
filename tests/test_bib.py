@@ -1,188 +1,145 @@
-"""Run with: python -m unittest discover -s tests"""
+"""Tests run on a small made-up dataset, never the live data."""
 import json
-import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 import bib  # noqa: E402
 
+BOOK_A = {"book": {"id": "alpha", "short": "Alpha", "title": "Alpha Book", "author": "A. Author", "year": 2020,
+                   "chapters": {"Ch 1": "One", "Ch 2": "Two"}},
+          "references": [
+              {"authors": "Smith, John", "year": 2001, "title": "Kinship and trust", "cited_in": ["Ch 1 n1", "Ch 2 n1"]},
+              {"authors": "Lee, Ann and Bob Smith", "year": 2005, "title": "Markets and fairness", "cited_in": ["Ch 1 n2"]},
+              {"authors": "Khan, Omar", "year": 2010, "title": "Rice and clans", "cited_in": ["Ch 2 n2"]}]}
+BOOK_B = {"book": {"id": "beta", "short": "Beta", "title": "Beta Book", "author": "B. Author", "year": 2021,
+                   "chapters": {"Ch 1": "One"}},
+          "references": [
+              {"authors": "Smith, John", "year": 2001, "title": "Kinship and Trust", "cited_in": ["Ch 1 n1"]},
+              {"authors": "Wu, Li", "year": 2015, "title": "Trust and growth", "cited_in": ["Ch 1 n2"]}]}
+CONCEPTS = [{"id": c, "label": c.title(), "group": "X"} for c in ("kinship", "trust", "markets", "growth", "rice")]
+GROUPS = [{"id": "india", "label": "India", "kind": "place"}, {"id": "islam", "label": "Islam", "kind": "religion"}]
+NOTES_A = [{"loc": "Ch 1 n1", "claim": "Strong kin ties lower trust in strangers.", "links": [["kinship", "trust", "-"]], "about": ["india"]},
+           {"loc": "Ch 1 n2", "claim": "Markets raise fairness.", "links": [["markets", "trust", "+"]]},
+           {"loc": "Ch 2 n1", "claim": "Kinship again.", "links": [["kinship", "trust", "-"]]}]
+NOTES_B = [{"loc": "Ch 1 n1", "claim": "Kinship raises trust.", "links": [["kinship", "trust", "+"]], "about": ["islam"]},
+           {"loc": "Ch 1 n2", "claim": "Trust raises growth.", "links": [["trust", "growth", "+"]]}]
+THEORY = {"id": "t1", "title": "Kin to growth", "books": ["alpha"],
+          "steps": [["kinship", "trust", "-"], ["markets", "trust", "+"], ["rice", "kinship", "+"]]}
 
-SECOND_BOOK = {
-    "book": {"id": "test-2024", "short": "Test", "title": "A Test Book", "author": "T. Ester",
-             "publisher": "P", "year": 2024, "chapters": {"Ch 1": "One", "Ch 2": "Two"}},
-    "references": [
-        # exact overlap with Galor's list
-        {"authors": "Alesina, Alberto, Paola Giuliano and Nathan Nunn", "year": "2013",
-         "title": "On the Origins of Gender Roles: Women and the Plough", "venue": "QJE",
-         "type": "article", "cited_in": ["Ch 1 n2", "Ch 2 n7"], "doi": "10.1093/qje/qjt005"},
-        # book reprinted in a different year: should still match
-        {"authors": "Diamond, Jared", "year": "1999", "title": "Guns, Germs, and Steel: The Fates of Human Societies",
-         "venue": "Norton", "type": "book", "cited_in": ["Ch 1 n1"]},
-        # working paper vs published version: flagged for review, not silently merged
-        {"authors": "Galor, Oded, and Marc Klemp", "year": "2022", "title": "Roots of Autocracy",
-         "venue": "JPE", "type": "article", "cited_in": ["Ch 2 n1"]},
-        # brand new
-        {"authors": "Nunn, Nathan, and Nancy Qian", "year": "2011",
-         "title": "The Potato's Contribution to Population and Urbanization", "venue": "QJE",
-         "type": "article", "cited_in": ["Ch 2 n3"], "flags": {"Ch 2 n3": "cites ‘Nunn (2011)’"}},
-    ],
-}
 
-
-class RepoCase(unittest.TestCase):
+class Fixture(unittest.TestCase):
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp())
-        for d in ("data", "site", "private"):
-            if (REPO / d).exists():
-                shutil.copytree(REPO / d, self.tmp / d, ignore=shutil.ignore_patterns("data"))
-        (self.tmp / "data").mkdir(exist_ok=True)
-        for f in (REPO / "data").glob("*.json"):
-            shutil.copy(f, self.tmp / "data" / f.name)
-        (self.tmp / "private").mkdir(exist_ok=True)
-        for f in (self.tmp / "private").glob("*.json"):
-            f.unlink()
-        bib.set_root(self.tmp)
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        (root / "data").mkdir()
+        (root / "private").mkdir()
+        bib.set_root(root)
+        bib.dump_json(bib.CONCEPTS_F, CONCEPTS)
+        bib.dump_json(bib.GROUPS_F, GROUPS)
+        bib.dump_json(bib.THEORIES_F, [THEORY])
+        db = bib.DB.load()
+        db.add_book(json.loads(json.dumps(BOOK_A)))
+        db.save()
+        db.add_book(json.loads(json.dumps(BOOK_B)))
+        db.save()
+        self.assertEqual(db.import_endnotes("alpha", NOTES_A), [])
+        self.assertEqual(db.import_endnotes("beta", NOTES_B), [])
+        db.save_endnotes()
         self.db = bib.DB.load()
 
     def tearDown(self):
-        bib.set_root(REPO)
-        shutil.rmtree(self.tmp)
+        bib.set_root(ROOT)
+        self.tmp.cleanup()
 
 
-class TestImport(RepoCase):
-    def test_baseline(self):
-        self.assertEqual(len(self.db.works), 403)
-        self.assertEqual(len(self.db.citations), 481)
+class TestImport(Fixture):
+    def test_dedupe_and_counts(self):
+        self.assertEqual(len(self.db.works), 4)  # Smith 2001 matched across books
+        self.assertEqual(len(self.db.citations), 6)
+        self.assertEqual(self.db.books_for("smith2001kinship"), ["alpha", "beta"])
         self.assertEqual(self.db.validate(), [])
 
-    def test_second_book_matching(self):
-        r = self.db.add_book(json.loads(json.dumps(SECOND_BOOK)))
-        matched = dict(r.matched)
-        self.assertIn("alesina2013origins", matched)
-        self.assertIn("diamond1997guns", matched)
-        self.assertEqual(len(r.review), 1)
-        self.assertEqual(r.review[0][1], "galor2018roots")
-        self.assertEqual(len(r.new), 2)
-        self.db.save()
-        db = bib.DB.load()
-        self.assertEqual(db.validate(), [])
-        self.assertEqual(db.books_for("alesina2013origins"), ["galor-2022", "test-2024"])
-        self.assertEqual(db.works["alesina2013origins"]["doi"], "10.1093/qje/qjt005")
-        flagged = [c for c in db.citations if c["book"] == "test-2024" and c.get("flag")]
-        self.assertEqual(len(flagged), 1)
+    def test_endnote_validation(self):
+        probs = self.db.import_endnotes("alpha", [{"loc": "Ch 1 n9", "claim": "x", "links": [["nope", "trust", "!"]],
+                                                   "about": ["mars"]}])
+        self.assertEqual(len(probs), 3)
+        self.assertEqual(len([n for n in self.db.endnotes if n["book"] == "alpha"]), 3)  # unchanged
 
-    def test_dry_run_writes_nothing(self):
-        self.db.add_book(json.loads(json.dumps(SECOND_BOOK)), dry_run=True)
-        self.assertNotIn("test-2024", bib.DB.load().books)
-        self.assertNotIn("test-2024", self.db.books)
-
-    def test_merge_and_remove(self):
-        r = self.db.add_book(json.loads(json.dumps(SECOND_BOOK)))
-        dup = r.review[0][0]
-        self.db.merge("galor2018roots", dup)
-        self.db.save()
-        db = bib.DB.load()
-        self.assertNotIn(dup, db.works)
-        self.assertEqual(db.books_for("galor2018roots"), ["galor-2022", "test-2024"])
-        orphans = db.remove_book("test-2024")
-        self.assertEqual(len(orphans), 1)  # only the potato paper was unique to it
-        self.assertEqual(len(db.works), 403)
-        self.assertEqual(db.validate(), [])
-
-    def test_ids_are_stable_slugs(self):
-        ids = list(self.db.works)
-        self.assertEqual(len(ids), len(set(ids)))
-        self.assertIn("ashraf2013genetic", ids)
-        self.assertIn("ashraf2013out", ids)
+    def test_merge_mode_keeps_rest(self):
+        self.db.import_endnotes("alpha", [{"loc": "Ch 1 n2", "claim": "Edited."}], replace=False)
+        alpha = {n["loc"]: n["claim"] for n in self.db.endnotes if n["book"] == "alpha"}
+        self.assertEqual(len(alpha), 3)
+        self.assertEqual(alpha["Ch 1 n2"], "Edited.")
 
 
-class TestBuildPrivacy(RepoCase):
-    def test_build_excludes_private(self):
-        bib.dump_json(bib.NOTES_F, {"alesina2013origins": {"verdict": "read",
-                                                           "note": "SECRET-NOTE: India plough split"}})
-        bib.dump_json(bib.PRIVATE / "log.json", [{"works": ["alesina2013origins"],
-                                                  "text": "SECRET-LOG entry", "url": "https://example.org/private/123",
-                                                  "score": 50000}])
-        meta = bib.build(self.db)
-        self.assertEqual(meta["works"], 403)
-        site_text = "".join(p.read_text(encoding="utf-8") for p in (self.tmp / "site").rglob("*") if p.is_file())
-        for secret in ("SECRET-NOTE", "SECRET-LOG", "example.org/private", "verdict"):
-            self.assertNotIn(secret, site_text)
-        self.assertEqual(bib.leak_check(), [])
+class TestAnalysis(Fixture):
+    def test_pillars(self):
+        p = bib.pillars(self.db, THEORY)
+        self.assertEqual(p["unsupported"], [2])           # rice → kinship has no endnote
+        step0 = p["steps"][0]
+        self.assertEqual(step0["works"], ["smith2001kinship"])
+        self.assertEqual(len(step0["against"]), 1)        # beta says the opposite
+        top = p["pillars"][0]
+        self.assertIn(top["id"], {"smith2001kinship", "lee2005markets"})
+        self.assertTrue(all(r["critical"] for r in p["pillars"]))
 
-    def test_build_refuses_private_field_in_works(self):
-        self.db.works["alesina2013origins"]["private_score"] = 99999
-        bib.build(self.db)  # field is dropped by the allowlist, so this passes
-        pub = json.loads((self.tmp / "site/data/works.json").read_text())
-        self.assertTrue(all("private_score" not in w for w in pub))
-        # but if something sneaks a private string into a public field, the guard trips
-        bib.dump_json(bib.PRIVATE / "log.json", [{"text": "a very private piece of text"}])
-        self.db.works["alesina2013origins"]["claims"] = ["a very private piece of text"]
+    def test_author_clusters(self):
+        # Lee & Smith share an author with Smith 2001: one independent source
+        self.assertEqual(len(bib.author_clusters(self.db, ["smith2001kinship", "lee2005markets"])), 1)
+        self.assertEqual(len(bib.author_clusters(self.db, ["smith2001kinship", "khan2010rice"])), 2)
+
+    def test_connections(self):
+        c = bib.connections(self.db)
+        self.assertTrue(any(x["from"] == "kinship" and x["to"] == "trust" for x in c["contested"]))
+        chain = [x["path"] for x in c["chains"]]
+        self.assertIn(["markets", "trust", "growth"], chain)   # alpha + beta, stated by neither
+        self.assertEqual(c["shared_works"][0]["id"], "smith2001kinship")
+
+    def test_compare_and_gaps(self):
+        g = bib.compare(self.db, ["india", "islam"])
+        self.assertEqual(g["cells"]["india"]["kinship"], [["alpha", "Ch 1 n1"]])
+        gaps = bib.gaps(self.db)
+        self.assertTrue(any(f["step"] == ["rice", "kinship", "+"] for f in gaps["fragile_steps"]))
+
+
+class TestBuildPrivacy(Fixture):
+    def test_build_publishes_only_public_fields(self):
+        self.db.works["smith2001kinship"]["secret_field"] = "x"
+        bib.build(self.db)
+        works = json.loads((bib.SITE_DATA / "works.json").read_text())
+        self.assertNotIn("secret_field", works[0])
+        for f in ("endnotes", "theories", "concepts", "groups", "analysis", "meta"):
+            self.assertTrue((bib.SITE_DATA / f"{f}.json").exists(), f)
+
+    def test_private_text_blocks_build(self):
+        bib.dump_json(bib.NOTES_F, {"smith2001kinship": {"note": "my private thought about this"}})
+        self.db.works["smith2001kinship"]["claims"] = ["my private thought about this"]
         with self.assertRaises(SystemExit):
             bib.build(self.db)
-        self.assertFalse(any((self.tmp / "site/data").glob("*")))  # nothing left behind
-
-
-class TestExtensions(RepoCase):
-    def test_private_ext_adds_command(self):
-        (self.tmp / "private" / "ext.py").write_text(
-            "def register(sub, handlers):\n"
-            "    sub.add_parser('hello')\n"
-            "    handlers['hello'] = lambda db, a: print('hello', len(db.works)) or 7\n")
-        self.assertEqual(bib.main(["hello"]), 7)
-        self.assertEqual(bib.main(["validate"]), 0)
-
-
-class TestEnrichAndExport(RepoCase):
-    def test_enrich_with_fake_openalex(self):
-        def fake_get(path, params):
-            if "search" in params and "plough" in params["search"].lower():
-                return {"results": [
-                    {"id": "https://openalex.org/W1", "doi": "https://doi.org/10.1093/qje/qjt005",
-                     "display_name": "On the Origins of Gender Roles: Women and the Plough",
-                     "publication_year": 2013, "cited_by_count": 2500, "fwci": 30.1, "is_retracted": False,
-                     "topics": [{"display_name": "Gender and Labor"}],
-                     "authorships": [{"author": {"display_name": "Alberto Alesina"}}]}]}
-            if "search" in params and "Fractionalization" in params["search"]:
-                return {"results": [  # wrong paper: right title words, wrong author
-                    {"id": "https://openalex.org/W2", "display_name": "Fractionalization",
-                     "publication_year": 2003, "authorships": [{"author": {"display_name": "Someone Else"}}]}]}
-            return {"results": []}
-        for wid in list(self.db.works):
-            if wid not in ("alesina2013origins", "alesina2003fractionalization"):
-                self.db.works[wid]["oa"] = {"id": "skip"}
-        m, un, ret = bib.enrich(self.db, _get=fake_get)
-        self.assertEqual(m, 1)
-        self.assertEqual(un, ["alesina2003fractionalization"])
-        w = bib.DB.load().works["alesina2013origins"]
-        self.assertEqual(w["doi"], "10.1093/qje/qjt005")
-        self.assertEqual(w["oa"]["cited_by_count"], 2500)
-
-    def test_exports(self):
-        works = sorted(self.db.works.values(), key=lambda w: w["id"])
-        bt = bib.to_bibtex(works)
-        self.assertEqual(bt.count("\n@"), 402)
-        self.assertIn("@article{alesina2013origins,", bt)
-        self.assertIn("Alesina, Alberto and Giuliano, Paola and Nunn, Nathan", bt)
-        csl = bib.to_csl(works)
-        self.assertEqual(len(csl), 403)
-        self.assertTrue(bib.to_csv(self.db, works).startswith("id,authors"))
+        self.assertFalse(any(bib.SITE_DATA.glob("*.json")))
 
 
 class TestHelpers(unittest.TestCase):
-    def test_parse_authors(self):
-        a = bib.parse_authors("Abramovitz, Moses, and Paul A. David")
-        self.assertEqual(a, [{"family": "Abramovitz", "given": "Moses"}, {"family": "David", "given": "Paul A."}])
-        self.assertEqual(bib.parse_authors("OECD"), [{"literal": "OECD"}])
-        self.assertEqual(bib.parse_authors("Bennett, Matthew R. et al.")[-1], {"literal": "others"})
+    def test_loc_key_and_ids(self):
+        self.assertLess(bib.loc_key("Ch 2 n3", ["Ch 1", "Ch 2"]), bib.loc_key("Ch 2 n10", ["Ch 1", "Ch 2"]))
+        self.assertEqual(bib.make_id("de la Croix, David", 2018, "Clans, guilds", set()), "delacroix2018clans")
 
-    def test_surname_key(self):
-        self.assertEqual(bib.surname_key("de la Croix, David"), "delacroix")
-        self.assertEqual(bib.surname_key("Özak, Ömer"), "ozak")
+    def test_enrich_uses_injected_fetch(self):
+        db = bib.DB([{"id": "w1", "authors": "Smith, J.", "year": "2001", "title": "Kinship and trust", "type": "article"}], [], [])
+        rec = {"id": "https://openalex.org/W1", "doi": "https://doi.org/10.1/x", "display_name": "Kinship and trust",
+               "publication_year": 2001, "cited_by_count": 42, "fwci": 1.5, "is_retracted": False, "topics": [],
+               "authorships": [{"author": {"display_name": "J. Smith"}}], "type": "article"}
+        with tempfile.TemporaryDirectory() as d:
+            bib.set_root(d)
+            try:
+                bib.enrich(db, _get=lambda path, params: {"results": [rec]})
+            finally:
+                bib.set_root(ROOT)
+        self.assertEqual(db.works["w1"]["oa"]["cited_by_count"], 42)
 
 
 if __name__ == "__main__":

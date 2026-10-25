@@ -1,0 +1,447 @@
+[
+ {
+  "id": "geography",
+  "label": "Geography (general)",
+  "group": "Environment"
+ },
+ {
+  "id": "climate",
+  "label": "Climate and climatic volatility",
+  "group": "Environment"
+ },
+ {
+  "id": "land_suitability",
+  "label": "Land suitability for agriculture",
+  "group": "Environment"
+ },
+ {
+  "id": "disease_environment",
+  "label": "Disease environment (malaria, tsetse)",
+  "group": "Environment"
+ },
+ {
+  "id": "migratory_distance",
+  "label": "Migratory distance from East Africa",
+  "group": "Environment"
+ },
+ {
+  "id": "isolation",
+  "label": "Geographic isolation and connectedness",
+  "group": "Environment"
+ },
+ {
+  "id": "coastal_access",
+  "label": "Coastal and maritime access",
+  "group": "Environment"
+ },
+ {
+  "id": "ruggedness",
+  "label": "Terrain ruggedness",
+  "group": "Environment"
+ },
+ {
+  "id": "biogeography",
+  "label": "Domesticable plants and animals, continental axis",
+  "group": "Environment"
+ },
+ {
+  "id": "neolithic_transition",
+  "label": "Timing of the Neolithic transition to farming",
+  "group": "Agriculture"
+ },
+ {
+  "id": "agricultural_productivity",
+  "label": "Agricultural productivity",
+  "group": "Agriculture"
+ },
+ {
+  "id": "crop_type",
+  "label": "Crop type (rice vs wheat, cereals, maize, potato)",
+  "group": "Agriculture"
+ },
+ {
+  "id": "plough",
+  "label": "Plough agriculture",
+  "group": "Agriculture"
+ },
+ {
+  "id": "irrigation",
+  "label": "Irrigation agriculture",
+  "group": "Agriculture"
+ },
+ {
+  "id": "pastoralism",
+  "label": "Pastoralism and dairying",
+  "group": "Agriculture"
+ },
+ {
+  "id": "food_storage",
+  "label": "Food storage and surplus",
+  "group": "Agriculture"
+ },
+ {
+  "id": "population_size",
+  "label": "Population size and density",
+  "group": "Demography"
+ },
+ {
+  "id": "fertility",
+  "label": "Fertility",
+  "group": "Demography"
+ },
+ {
+  "id": "mortality",
+  "label": "Mortality and life expectancy",
+  "group": "Demography"
+ },
+ {
+  "id": "demographic_transition",
+  "label": "Demographic transition",
+  "group": "Demography"
+ },
+ {
+  "id": "malthusian_stagnation",
+  "label": "Malthusian stagnation of living standards",
+  "group": "Demography"
+ },
+ {
+  "id": "quantity_quality",
+  "label": "Child quantity–quality trade-off",
+  "group": "Demography"
+ },
+ {
+  "id": "migration",
+  "label": "Migration and population flows",
+  "group": "Demography"
+ },
+ {
+  "id": "human_capital",
+  "label": "Human capital and schooling",
+  "group": "Knowledge"
+ },
+ {
+  "id": "literacy",
+  "label": "Literacy",
+  "group": "Knowledge"
+ },
+ {
+  "id": "technological_progress",
+  "label": "Technological progress",
+  "group": "Knowledge"
+ },
+ {
+  "id": "innovation",
+  "label": "Innovation and inventiveness",
+  "group": "Knowledge"
+ },
+ {
+  "id": "printing",
+  "label": "Printing press and books",
+  "group": "Knowledge"
+ },
+ {
+  "id": "science",
+  "label": "Science and the knowledge economy",
+  "group": "Knowledge"
+ },
+ {
+  "id": "collective_brain",
+  "label": "Collective brain: size and interconnectedness of networks",
+  "group": "Knowledge"
+ },
+ {
+  "id": "social_learning",
+  "label": "Social learning and cultural transmission",
+  "group": "Knowledge"
+ },
+ {
+  "id": "industrialization",
+  "label": "Industrialization",
+  "group": "Economy"
+ },
+ {
+  "id": "economic_growth",
+  "label": "Economic growth and income per person",
+  "group": "Economy"
+ },
+ {
+  "id": "great_divergence",
+  "label": "Great Divergence between regions",
+  "group": "Economy"
+ },
+ {
+  "id": "trade",
+  "label": "Trade and globalization",
+  "group": "Economy"
+ },
+ {
+  "id": "market_integration",
+  "label": "Market integration and impersonal exchange",
+  "group": "Economy"
+ },
+ {
+  "id": "urbanization",
+  "label": "Urbanization and city growth",
+  "group": "Economy"
+ },
+ {
+  "id": "inequality",
+  "label": "Inequality (land, class, income)",
+  "group": "Economy"
+ },
+ {
+  "id": "child_labour",
+  "label": "Child labour",
+  "group": "Economy"
+ },
+ {
+  "id": "female_labour",
+  "label": "Women's work and the gender wage gap",
+  "group": "Economy"
+ },
+ {
+  "id": "work_hours",
+  "label": "Work ethic and working hours",
+  "group": "Economy"
+ },
+ {
+  "id": "genetic_diversity",
+  "label": "Genetic and phenotypic diversity",
+  "group": "Biology"
+ },
+ {
+  "id": "natural_selection",
+  "label": "Natural selection on traits",
+  "group": "Biology"
+ },
+ {
+  "id": "brain_evolution",
+  "label": "Brain size and cognitive evolution",
+  "group": "Biology"
+ },
+ {
+  "id": "lactase",
+  "label": "Lactase persistence",
+  "group": "Biology"
+ },
+ {
+  "id": "hormones",
+  "label": "Testosterone and physiology",
+  "group": "Biology"
+ },
+ {
+  "id": "population_diversity",
+  "label": "Population diversity (ethnic, cultural)",
+  "group": "Diversity"
+ },
+ {
+  "id": "social_cohesion",
+  "label": "Social cohesion, trust and conflict",
+  "group": "Diversity"
+ },
+ {
+  "id": "individualism",
+  "label": "Individualism vs collectivism",
+  "group": "Psychology"
+ },
+ {
+  "id": "analytic_thinking",
+  "label": "Analytic vs holistic thinking",
+  "group": "Psychology"
+ },
+ {
+  "id": "impersonal_prosociality",
+  "label": "Impersonal trust, fairness and cooperation with strangers",
+  "group": "Psychology"
+ },
+ {
+  "id": "conformity",
+  "label": "Conformity and obedience to tradition",
+  "group": "Psychology"
+ },
+ {
+  "id": "guilt_shame",
+  "label": "Shame over guilt",
+  "group": "Psychology"
+ },
+ {
+  "id": "intentionality",
+  "label": "Focus on intentions in moral judgement",
+  "group": "Psychology"
+ },
+ {
+  "id": "moral_universalism",
+  "label": "Moral universalism vs in-group loyalty",
+  "group": "Psychology"
+ },
+ {
+  "id": "patience",
+  "label": "Patience and time preference",
+  "group": "Psychology"
+ },
+ {
+  "id": "risk_preference",
+  "label": "Risk and loss aversion",
+  "group": "Psychology"
+ },
+ {
+  "id": "self_control",
+  "label": "Self-control and self-regulation",
+  "group": "Psychology"
+ },
+ {
+  "id": "dispositional_thinking",
+  "label": "Dispositional attribution and self-focus",
+  "group": "Psychology"
+ },
+ {
+  "id": "overconfidence",
+  "label": "Self-enhancement and overconfidence",
+  "group": "Psychology"
+ },
+ {
+  "id": "gender_norms",
+  "label": "Gender equality norms",
+  "group": "Psychology"
+ },
+ {
+  "id": "cultural_traits",
+  "label": "Cultural traits and values (general)",
+  "group": "Psychology"
+ },
+ {
+  "id": "language",
+  "label": "Language structure",
+  "group": "Psychology"
+ },
+ {
+  "id": "kinship_intensity",
+  "label": "Kinship intensity",
+  "group": "Family"
+ },
+ {
+  "id": "cousin_marriage",
+  "label": "Cousin marriage and endogamy",
+  "group": "Family"
+ },
+ {
+  "id": "polygyny",
+  "label": "Polygyny vs monogamy",
+  "group": "Family"
+ },
+ {
+  "id": "nuclear_family",
+  "label": "Nuclear family and neolocal residence",
+  "group": "Family"
+ },
+ {
+  "id": "clans",
+  "label": "Clans, lineages and segmentary groups",
+  "group": "Family"
+ },
+ {
+  "id": "church_mfp",
+  "label": "Western Church's Marriage and Family Program",
+  "group": "Family"
+ },
+ {
+  "id": "european_marriage_pattern",
+  "label": "European marriage pattern (late marriage)",
+  "group": "Family"
+ },
+ {
+  "id": "family_ties",
+  "label": "Strength of family ties",
+  "group": "Family"
+ },
+ {
+  "id": "religion",
+  "label": "Religion (general)",
+  "group": "Religion"
+ },
+ {
+  "id": "moralizing_gods",
+  "label": "Moralizing gods and supernatural punishment",
+  "group": "Religion"
+ },
+ {
+  "id": "protestantism",
+  "label": "Protestantism",
+  "group": "Religion"
+ },
+ {
+  "id": "church_exposure",
+  "label": "Exposure to the Western Church",
+  "group": "Religion"
+ },
+ {
+  "id": "islam",
+  "label": "Islam and Islamic institutions",
+  "group": "Religion"
+ },
+ {
+  "id": "ritual",
+  "label": "Ritual",
+  "group": "Religion"
+ },
+ {
+  "id": "religious_competition",
+  "label": "Religious competition and pluralism",
+  "group": "Religion"
+ },
+ {
+  "id": "institutions",
+  "label": "Political and economic institutions (inclusive vs extractive)",
+  "group": "Institutions"
+ },
+ {
+  "id": "property_rights",
+  "label": "Property rights",
+  "group": "Institutions"
+ },
+ {
+  "id": "state_formation",
+  "label": "State formation and early statehood",
+  "group": "Institutions"
+ },
+ {
+  "id": "democracy",
+  "label": "Democracy and representative government",
+  "group": "Institutions"
+ },
+ {
+  "id": "rule_of_law",
+  "label": "Law, legal systems and individual rights",
+  "group": "Institutions"
+ },
+ {
+  "id": "colonialism",
+  "label": "Colonialism",
+  "group": "Institutions"
+ },
+ {
+  "id": "voluntary_associations",
+  "label": "Voluntary associations (guilds, charter towns, universities, monasteries)",
+  "group": "Institutions"
+ },
+ {
+  "id": "intergroup_competition",
+  "label": "War and intergroup competition",
+  "group": "Institutions"
+ },
+ {
+  "id": "slave_trade",
+  "label": "Slave trades",
+  "group": "Institutions"
+ },
+ {
+  "id": "social_complexity",
+  "label": "Social scale and political complexity",
+  "group": "Institutions"
+ },
+ {
+  "id": "corruption",
+  "label": "Nepotism and corruption",
+  "group": "Institutions"
+ }
+]
