@@ -145,7 +145,10 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+              Federated: !If
+                - MakeOIDC
+                - !Ref GitHubOIDCProvider   # also makes the role wait for the provider
+                - !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
             Action: sts:AssumeRoleWithWebIdentity
             Condition:
               StringEquals:
